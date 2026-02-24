@@ -1,19 +1,5 @@
-# 🚀 [Proje Adı] - Backend API RESTful Servisleri
+# TUM GEREKSINIMLER
 
-Bu depo, kullanıcı kimlik doğrulama, AI destekli seviye belirleme sınavları ve kapsamlı bir ilan/başvuru yönetim sistemini barındıran backend API mimarisini içermektedir.
-
-## 📌 Özellikler
-
-| Kategori | Kapsam |
-| :--- | :--- |
-| **Kullanıcı Yönetimi** | Güvenli JWT/Session tabanlı kimlik doğrulama, profil ve hesap yönetimi. |
-| **Seviye Sınavı** | AI entegrasyonlu, dinamik soru getirme ve sonuç analiz altyapısı. |
-| **İlan Modülü** | İlan oluşturma, detaylı arama/filtreleme ve CRUD operasyonları. |
-| **Başvuru Sistemi** | İlanlara katılım istekleri, onay/ret mekanizmaları ve durum takibi. |
-
----
-
-## 🛠 API Dokümantasyonu
 
 ### 1. Kullanıcı ve Profil İşlemleri (Auth & Users)
 

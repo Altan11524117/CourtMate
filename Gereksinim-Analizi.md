@@ -1,106 +1,91 @@
-# TUM GEREKSINIMLER
+# 📌 API Gereksinimleri ve Görev Dağılımı
 
+Bu doküman, sistemdeki API endpoint'lerini, açıklamalarını ve görev atamalarını içermektedir.
 
-### 1. Kullanıcı ve Profil İşlemleri (Auth & Users)
+## 👤 1. Kullanıcı ve Profil İşlemleri (Auth & Users)
 
-#### `POST /auth/register`
-Sisteme yeni kullanıcı kaydı oluşturur.
-* **Yetki:** Public
-* **Açıklama:** İstemciden zorunlu verileri alır ve şifreyi güvenlik standartlarına (örn: bcrypt) uygun şekilde hashleyerek veritabanına kaydeder.
+**Üye Olma** (İsim Soyisim)
+* **API Metodu:** `POST /auth/register`
+* **Açıklama:** Sisteme yeni kullanıcı kaydı oluşturur. İstemciden zorunlu verileri alır ve şifreyi güvenlik standartlarına (örn: bcrypt) uygun şekilde hashleyerek veritabanına kaydeder. Yetki: Public.
 
-#### `POST /auth/login`
-Kullanıcı girişini ve kimlik doğrulamasını sağlar.
-* **Yetki:** Public
-* **Açıklama:** Doğrulama başarılı olursa, sonraki güvenli iletişimler için istemciye bir erişim token'ı döndürür.
+**Giriş Yapma** (İsim Soyisim)
+* **API Metodu:** `POST /auth/login`
+* **Açıklama:** Kullanıcı girişini ve kimlik doğrulamasını sağlar. Doğrulama başarılı olursa, sonraki güvenli iletişimler için istemciye bir erişim token'ı döndürür. Yetki: Public.
 
-#### `POST /auth/logout`
-Aktif oturumu sonlandırır.
-* **Yetki:** Bearer Token (Giriş Yapmış Kullanıcı)
-* **Açıklama:** İstemci tarafındaki token silinir ve sunucu tarafında kara listeye alınarak tekrar kullanımı engellenir.
+**Çıkış Yapma** (İsim Soyisim)
+* **API Metodu:** `POST /auth/logout`
+* **Açıklama:** Aktif oturumu sonlandırır. İstemci tarafındaki token silinir ve sunucu tarafında kara listeye alınarak tekrar kullanımı engellenir. Yetki: Bearer Token.
 
-#### `POST /auth/reset-password`
-Şifre sıfırlama sürecini başlatır.
-* **Yetki:** Public
-* **Açıklama:** Kullanıcının kayıtlı adresine süreli ve tek kullanımlık bir şifre sıfırlama bağlantısı gönderir.
+**Şifre Sıfırlama** (İsim Soyisim)
+* **API Metodu:** `POST /auth/reset-password`
+* **Açıklama:** Şifre sıfırlama sürecini başlatır. Kullanıcının kayıtlı adresine süreli ve tek kullanımlık bir şifre sıfırlama bağlantısı gönderir. Yetki: Public.
 
-#### `GET /users/{userId}/profile`
-Kullanıcı profil bilgilerini getirir.
-* **Yetki:** Bearer Token
-* **Açıklama:** İstek yapan kişi kendi profilini görüntülüyorsa tüm detaylar, farklı bir kullanıcıyı görüntülüyorsa sadece herkese açık veriler (public) döndürülür.
+**Profil Görüntüleme** (İsim Soyisim)
+* **API Metodu:** `GET /users/{userId}/profile`
+* **Açıklama:** Kullanıcı profil bilgilerini getirir. İstek yapan kişi kendi profilini görüntülüyorsa tüm detaylar, farklı bir kullanıcıyı görüntülüyorsa sadece herkese açık veriler (public) döndürülür. Yetki: Bearer Token.
 
-#### `PATCH /users/{userId}/profile`
-Kullanıcının profil bilgilerini günceller.
-* **Yetki:** Bearer Token (Sadece Hesap Sahibi)
-* **Açıklama:** Yetki kontrolü yapılır. Kullanıcı yalnızca kendi bilgilerini güncelleyebilir.
+**Profil Güncelleme** (İsim Soyisim)
+* **API Metodu:** `PATCH /users/{userId}/profile`
+* **Açıklama:** Kullanıcının profil bilgilerini günceller. Yetki kontrolü yapılır. Kullanıcı yalnızca kendi bilgilerini güncelleyebilir. Yetki: Bearer Token.
 
-#### `DELETE /users/{userId}`
-Kullanıcı hesabını sistemden kaldırır.
-* **Yetki:** Bearer Token (Sadece Hesap Sahibi veya Admin)
-* **Açıklama:** Veri bütünlüğünü korumak adına "Soft Delete" (veritabanında pasife alma) yöntemi uygulanır.
+**Hesap Silme** (İsim Soyisim)
+* **API Metodu:** `DELETE /users/{userId}`
+* **Açıklama:** Kullanıcı hesabını sistemden kaldırır. Veri bütünlüğünü korumak adına "Soft Delete" (veritabanında pasife alma) yöntemi uygulanır. Yetki: Bearer Token.
 
 ---
 
-### 2. Seviye Sınavı (AI Destekli)
+## 🧠 2. Seviye Sınavı (AI Destekli)
 
-#### `GET /exams/placement/questions`
-Seviye belirleme sorularını getirir.
-* **Yetki:** Bearer Token
-* **Açıklama:** AI asistanı veya sistem havuzu tarafından kullanıcının seviyesini ölçmek için hazırlanan soruları istemciye iletir.
+**Sınav Sorularını Getirme** (İsim Soyisim)
+* **API Metodu:** `GET /exams/placement/questions`
+* **Açıklama:** Seviye belirleme sorularını getirir. AI asistanı veya sistem havuzu tarafından kullanıcının seviyesini ölçmek için hazırlanan soruları istemciye iletir. Yetki: Bearer Token.
 
-#### `POST /exams/placement/submit`
-Sınav yanıtlarını gönderir ve seviyeyi belirler.
-* **Yetki:** Bearer Token
-* **Açıklama:** Cevaplar analiz edilir, başarı puanı hesaplanır ve kullanıcının veritabanındaki "Seviye" bilgisi kalıcı olarak güncellenir.
+**Sınav Sonucunu Gönderme** (İsim Soyisim)
+* **API Metodu:** `POST /exams/placement/submit`
+* **Açıklama:** Sınav yanıtlarını gönderir ve seviyeyi belirler. Cevaplar analiz edilir, başarı puanı hesaplanır ve kullanıcının veritabanındaki "Seviye" bilgisi kalıcı olarak güncellenir. Yetki: Bearer Token.
 
 ---
 
-### 3. İlan Yönetimi
+## 📢 3. İlan Yönetimi
 
-#### `GET /ads`
-Aktif ilanları listeler.
-* **Yetki:** Public veya Bearer Token (Sistem tercihine göre)
-* **Açıklama:** Performans optimizasyonu için sayfalama (Pagination - limit/offset) kullanılarak veriler getirilir.
+**İlanları Listeleme** (İsim Soyisim)
+* **API Metodu:** `GET /ads`
+* **Açıklama:** Aktif ilanları listeler. Performans optimizasyonu için sayfalama (Pagination - limit/offset) kullanılarak veriler getirilir. Yetki: Public / Bearer Token.
 
-#### `GET /ads/search`
-İlanlar içinde detaylı arama ve filtreleme yapar.
-* **Yetki:** Public veya Bearer Token
-* **Açıklama:** Kategori, konum, sıralama gibi URL query parametrelerine göre süzülmüş sonuçları döndürür.
+**İlan Arama ve Filtreleme** (İsim Soyisim)
+* **API Metodu:** `GET /ads/search`
+* **Açıklama:** İlanlar içinde detaylı arama ve filtreleme yapar. Kategori, konum, sıralama gibi URL query parametrelerine göre süzülmüş sonuçları döndürür. Yetki: Public / Bearer Token.
 
-#### `POST /ads`
-Yeni bir ilan oluşturur.
-* **Yetki:** Bearer Token
-* **Açıklama:** İstek yapan kullanıcının ID'si otomatik olarak ilanın `ownerId` (sahibi) alanına atanır.
+**İlan Oluşturma** (İsim Soyisim)
+* **API Metodu:** `POST /ads`
+* **Açıklama:** Yeni bir ilan oluşturur. İstek yapan kullanıcının ID'si otomatik olarak ilanın ownerId (sahibi) alanına atanır. Yetki: Bearer Token.
 
-#### `GET /ads/{adId}`
-Belirli bir ilanın detaylarını getirir.
-* **Yetki:** Public veya Bearer Token
-* **Açıklama:** İlanın içeriği, görselleri ve ilan sahibinin özet profil bilgileriyle birlikte okunma/görüntülenme sayısını artırarak getirir.
+**İlan Detayı Görüntüleme** (İsim Soyisim)
+* **API Metodu:** `GET /ads/{adId}`
+* **Açıklama:** Belirli bir ilanın detaylarını getirir. İlanın içeriği, görselleri ve ilan sahibinin özet profil bilgileriyle birlikte okunma/görüntülenme sayısını artırarak getirir. Yetki: Public / Bearer Token.
 
-#### `PATCH /ads/{adId}`
-Yayınlanmış ilanı günceller.
-* **Yetki:** Bearer Token (Sadece İlan Sahibi)
-* **Açıklama:** Kullanıcının, gerçekten ilanın sahibi olup olmadığı kontrol edilir, değilse `403 Forbidden` döndürülür.
+**İlan Güncelleme** (İsim Soyisim)
+* **API Metodu:** `PATCH /ads/{adId}`
+* **Açıklama:** Yayınlanmış ilanı günceller. Kullanıcının, gerçekten ilanın sahibi olup olmadığı kontrol edilir, değilse 403 Forbidden döndürülür. Yetki: Bearer Token.
 
-#### `DELETE /ads/{adId}`
-İlanı sistemden kaldırır.
-* **Yetki:** Bearer Token (Sadece İlan Sahibi veya Admin)
-* **Açıklama:** İlan ve ilana bağlı başvurular kaskad (cascade) silme veya soft delete mantığıyla temizlenir.
+**İlan Silme** (İsim Soyisim)
+* **API Metodu:** `DELETE /ads/{adId}`
+* **Açıklama:** İlanı sistemden kaldırır. İlan ve ilana bağlı başvurular kaskad (cascade) silme veya soft delete mantığıyla temizlenir. Yetki: Bearer Token.
 
 ---
 
-### 4. İlan Başvuru ve İstek Süreçleri
+## 🤝 4. İlan Başvuru ve İstek Süreçleri
 
-#### `POST /ads/{adId}/applications`
-İlana katılma isteği gönderir.
-* **Yetki:** Bearer Token
-* **Açıklama:** Kullanıcının ilgilendiği ilana başvuru yapmasını sağlar. İş kuralı gereği kullanıcı kendi ilanına başvuramaz. Başvuru durumu başlangıçta "bekliyor" (pending) olarak atanır.
+**İlana Başvurma** (İsim Soyisim)
+* **API Metodu:** `POST /ads/{adId}/applications`
+* **Açıklama:** İlana katılma isteği gönderir. Kullanıcının ilgilendiği ilana başvuru yapmasını sağlar. İş kuralı gereği kullanıcı kendi ilanına başvuramaz. Başvuru durumu başlangıçta "bekliyor" (pending) olarak atanır. Yetki: Bearer Token.
 
-#### `GET /ads/{adId}/applications`
-İlana gelen başvuru isteklerini listeler.
-* **Yetki:** Bearer Token (Sadece İlan Sahibi)
-* **Açıklama:** Başvuran kişilerin özet profilleriyle beraber, ilan sahibine özel bir liste döndürülür.
+**Başvuruları Listeleme** (İsim Soyisim)
+* **API Metodu:** `GET /ads/{adId}/applications`
+* **Açıklama:** İlana gelen başvuru isteklerini listeler. Başvuran kişilerin özet profilleriyle beraber, ilan sahibine özel bir liste döndürülür. Yetki: Bearer Token.
 
-#### `PATCH /ads/{adId}/applications/{applicationId}`
-Gelen başvuruyu onaylar veya reddeder.
+**Başvuru Onaylama/Reddetme** (İsim Soyisim)
+* **API Metodu:** `PATCH /ads/{adId}/applications/{applicationId}`
+* **Açıklama:** Gelen başvuruyu onaylar veya reddeder. İlan sahibinin kararına göre başvurunun durumunu günceller. Yetki: Bearer Token.
 * **Yetki:** Bearer Token (Sadece İlan Sahibi)
 * **Açıklama:** Başvurunun durumu `accepted` veya `rejected` olarak güncellenir. İşlem sonrası ilgili kullanıcıya bildirim/e-posta tetiklenebilir.

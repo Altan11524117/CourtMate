@@ -5,7 +5,7 @@
 
 
 **Proje Tanımı:** 
-CourtMate  tenis oynarken parner bulmada sikinti yasamadan kaynakli aklima gelen bi fikirdi bizde neden bunu bi proje seklinde yapmayalim dedik projemiz toplugumuzun tenis seviyesine gore ai destegi ile gruoplandirdirdigi ve bizi seviyemize gore  tenis parteri bulamamiz icin davet olusturdugumuz  veya davetleri kabul/reddettigimiz bir   tenis oynama temmeli bi partner bulma uygulamasi
+Platform, kullanıcıları yapay zeka (AI) destekli bir algoritma yardımıyla tenis yeteneklerine göre analiz edip gruplandırır. Bu sayede oyuncular, kendi seviyelerindeki diğer oyuncuları kolayca keşfedebilir, maç davetleri oluşturabilir ve gelen davetleri yöneterek (kabul/red) hızlıca korta inebilirler. CourtMate, sadece bir eşleştirme aracı değil, aynı zamanda aktif bir tenis topluluğu inşa etme projesidir.
 
 
 **Proje Kategorisi:** 

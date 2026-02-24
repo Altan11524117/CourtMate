@@ -3,7 +3,6 @@
 
 ## Proje Hakkında
 
-![Ürün Tanıtım Görseli]
 
 **Proje Tanımı:** 
 CourtMate  tenis oynarken parner bulmada sikinti yasamadan kaynakli aklima gelen bi fikirdi bizde neden bunu bi proje seklinde yapmayalim dedik projemiz toplugumuzun tenis seviyesine gore ai destegi ile gruoplandirdirdigi ve bizi seviyemize gore  tenis parteri bulamamiz icin davet olusturdugumuz  veya davetleri kabul/reddettigimiz bir   tenis oynama temmeli bi partner bulma uygulamasi

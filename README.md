@@ -16,12 +16,6 @@ Spor alaninda ozellikle tennis alaninda parntere bulma konusunda ceilen sikintiy
 
 ---
 
-## Proje Linkleri
-
-
-
----
-
 ## Proje Ekibi
 
 **ARALAY** 

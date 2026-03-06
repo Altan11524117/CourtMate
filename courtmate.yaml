@@ -1,0 +1,604 @@
+openapi: 3.0.3
+info:
+  title: CourtMate API - Tenis Partneri Eşleştirme Sistemi
+  version: 1.0.0
+  description: >
+    Bu API, CourtMate tenis partneri eşleştirme uygulaması için tasarlanmıştır.
+    Kullanıcı yönetimi, AI destekli seviye belirleme ve maç ilanı süreçlerini kapsar.
+    Tüm güvenli uç noktalar JWT (Bearer Token) ile korunmaktadır.
+  contact:
+    name: CourtMate Geliştirme Ekibi
+    email: dev@courtmate.app
+
+servers:
+  - url: https://api.courtmate.app/v1
+    description: Üretim (Production)
+  - url: https://staging.courtmate.app/v1
+    description: Test (Staging)
+  - url: http://localhost:8000/v1
+    description: Yerel Geliştirme (Development)
+
+tags:
+  - name: Auth
+    description: Kayıt, giriş, çıkış ve şifre işlemleri
+  - name: Users
+    description: Kullanıcı profili görüntüleme, güncelleme ve hesap silme
+  - name: Exams
+    description: AI destekli seviye belirleme sınavı işlemleri
+  - name: Ads
+    description: Maç ilanları oluşturma, arama, listeleme ve yönetimi
+  - name: Applications
+    description: İlanlara başvuru yapma ve başvuruları yönetme
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ==========================================
+  # 1. AUTH & USERS
+  # ==========================================
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Üye Olma
+      description: Sisteme yeni kullanıcı kaydı oluşturur. Şifre bcrypt ile hashlenir.
+      security: [] # Bu uç nokta herkese açık
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        "201":
+          description: Kullanıcı başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Giriş Yapma
+      description: Kullanıcı kimlik doğrulaması yapar ve JWT erişim token'ı döndürür.
+      security: [] # Bu uç nokta herkese açık
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        "200":
+          description: Başarılı giriş
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "401":
+          description: E-posta veya şifre hatalı
+
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Çıkış Yapma
+      description: Aktif oturumu sonlandırır, token kara listeye alınır.
+      operationId: logoutUser
+      responses:
+        "200":
+          description: Başarıyla çıkış yapıldı
+        "401":
+          description: Yetkisiz erişim
+
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Şifre Sıfırlama
+      description: Kullanıcının kayıtlı adresine süreli ve tek kullanımlık bir şifre sıfırlama bağlantısı gönderir.
+      security: []
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required:
+                - email
+      responses:
+        "200":
+          description: Sıfırlama bağlantısı e-posta adresine gönderildi
+
+  /users/{userId}/profile:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Kullanıcının benzersiz ID'si
+    get:
+      tags:
+        - Users
+      summary: Profil Görüntüleme
+      description: Kullanıcı profil bilgilerini getirir. Kendisi ise tüm detaylar, başkası ise sadece public (herkese açık) veriler döndürülür.
+      operationId: getUserProfile
+      responses:
+        "200":
+          description: Profil detayları
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: Kullanıcı bulunamadı
+
+    patch:
+      tags:
+        - Users
+      summary: Profil Güncelleme
+      description: Kullanıcının kendi profil bilgilerini günceller.
+      operationId: updateUserProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateInput'
+      responses:
+        "200":
+          description: Profil başarıyla güncellendi
+        "403":
+          description: Sadece kendi profilinizi güncelleyebilirsiniz
+
+  /users/{userId}:
+    delete:
+      tags:
+        - Users
+      summary: Hesap Silme
+      description: Kullanıcı hesabını sistemden kaldırır (Soft Delete).
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Hesap başarıyla silindi (pasife alındı)
+        "403":
+          description: Sadece kendi hesabınızı silebilirsiniz
+
+  # ==========================================
+  # 2. SEVİYE SINAVI
+  # ==========================================
+  /exams/placement/questions:
+    get:
+      tags:
+        - Exams
+      summary: Sınav Sorularını Getirme
+      description: AI asistanı havuzundan kullanıcının seviyesini ölçmek için sorular getirir.
+      operationId: getExamQuestions
+      responses:
+        "200":
+          description: Sınav soruları listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExamQuestion'
+
+  /exams/placement/submit:
+    post:
+      tags:
+        - Exams
+      summary: Sınav Sonucunu Gönderme
+      description: Sınav yanıtları analiz edilir, başarı puanı hesaplanır ve kullanıcının seviyesi güncellenir.
+      operationId: submitExam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExamSubmitInput'
+      responses:
+        "200":
+          description: Sınav başarıyla değerlendirildi ve seviye güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamResult'
+
+  # ==========================================
+  # 3. İLAN YÖNETİMİ
+  # ==========================================
+  /ads:
+    get:
+      tags:
+        - Ads
+      summary: İlanları Listeleme
+      description: Aktif ilanları sayfalamalı (Pagination) olarak listeler.
+      operationId: listAds
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: İlan listesi başarıyla getirildi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ad'
+
+    post:
+      tags:
+        - Ads
+      summary: İlan Oluşturma
+      description: Yeni bir maç ilanı oluşturur. İstek yapanın ID'si otomatik olarak ownerId atanır.
+      operationId: createAd
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdInput'
+      responses:
+        "201":
+          description: İlan oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ad'
+
+  /ads/search:
+    get:
+      tags:
+        - Ads
+      summary: İlan Arama ve Filtreleme
+      description: Kategori, konum ve sıralama parametrelerine göre süzülmüş sonuçları döndürür.
+      operationId: searchAds
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, oldest, level_asc, level_desc]
+      responses:
+        "200":
+          description: Filtrelenmiş ilan sonuçları
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ad'
+
+  /ads/{adId}:
+    parameters:
+      - name: adId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Ads
+      summary: İlan Detayı Görüntüleme
+      description: İlan içeriği ve sahibinin özet profil bilgileri getirilir. Okunma sayısı 1 artırılır.
+      operationId: getAdDetail
+      responses:
+        "200":
+          description: İlan detayları
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdDetail'
+
+    patch:
+      tags:
+        - Ads
+      summary: İlan Güncelleme
+      description: Yayınlanmış ilanı günceller. Sadece ilanın sahibi yapabilir.
+      operationId: updateAd
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdInput'
+      responses:
+        "200":
+          description: İlan güncellendi
+        "403":
+          description: Sadece ilanın sahibi güncelleyebilir (Forbidden)
+
+    delete:
+      tags:
+        - Ads
+      summary: İlan Silme
+      description: İlanı ve kaskad/soft delete mantığıyla bağlı başvuruları sistemden kaldırır.
+      operationId: deleteAd
+      responses:
+        "204":
+          description: İlan başarıyla silindi
+        "403":
+          description: Sadece ilanın sahibi silebilir (Forbidden)
+
+  /ads/{adId}/applications:
+    parameters:
+      - name: adId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Applications
+      summary: Başvuruları Listeleme
+      description: İlana gelen başvuru isteklerini listeler. Sadece ilan sahibi görebilir.
+      operationId: listApplications
+      responses:
+        "200":
+          description: Başvurular listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationList'
+        "403":
+          description: Bu listeyi sadece ilanın sahibi görebilir
+
+    post:
+      tags:
+        - Applications
+      summary: İlana Başvurma
+      description: İlana katılma isteği gönderir (durum 'pending' olur). Kullanıcı kendi ilanına başvuramaz.
+      operationId: applyToAd
+      responses:
+        "201":
+          description: Başvuru başarıyla alındı
+        "400":
+          description: Kullanıcı kendi ilanına başvuramaz
+
+  /ads/{adId}/applications/{applicationId}:
+    patch:
+      tags:
+        - Applications
+      summary: Başvuru Onaylama/Reddetme
+      description: Gelen başvurunun durumunu günceller (approved veya rejected). Sadece ilan sahibi yapabilir.
+      operationId: updateApplicationStatus
+      parameters:
+        - name: adId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+              required:
+                - status
+      responses:
+        "200":
+          description: Başvuru durumu güncellendi
+        "403":
+          description: Sadece ilan sahibi işlem yapabilir
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        fullName:
+          type: string
+      required: [email, password, fullName]
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required: [email, password]
+
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        expiresIn:
+          type: integer
+          description: Saniye cinsinden geçerlilik süresi
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        level:
+          type: string
+          description: AI tarafından hesaplanmış seviye (örn. ITN 6)
+        isActive:
+          type: boolean
+
+    ProfileUpdateInput:
+      type: object
+      properties:
+        fullName:
+          type: string
+        preferredHand:
+          type: string
+          enum: [Sağ, Sol, İki El]
+        bio:
+          type: string
+
+    ExamQuestion:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+          example: "Forehand vuruşlarında ne kadar tutarlısınız?"
+        options:
+          type: array
+          items:
+            type: string
+            
+    ExamSubmitInput:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              questionId:
+                type: string
+              answerText:
+                type: string
+
+    ExamResult:
+      type: object
+      properties:
+        assignedLevel:
+          type: string
+          example: "Orta-İleri (ITN 5)"
+        score:
+          type: integer
+          example: 78
+
+    Ad:
+      type: object
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+          example: "Tekler, Çiftler, Antrenman"
+        location:
+          type: string
+        requiredLevel:
+          type: string
+        matchDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [open, filled, cancelled]
+
+    AdInput:
+      type: object
+      properties:
+        title:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        requiredLevel:
+          type: string
+        matchDate:
+          type: string
+          format: date-time
+      required: [title, location, matchDate]
+
+    AdDetail:
+      allOf:
+        - $ref: '#/components/schemas/Ad'
+        - type: object
+          properties:
+            viewCount:
+              type: integer
+            ownerProfileSummary:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                level:
+                  type: string
+
+    ApplicationList:
+      type: object
+      properties:
+        id:
+          type: string
+        applicantId:
+          type: string
+        applicantName:
+          type: string
+        applicantLevel:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        createdAt:
+          type: string
+          format: date-time

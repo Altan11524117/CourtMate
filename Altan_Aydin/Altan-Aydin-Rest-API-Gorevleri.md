@@ -1,56 +1,107 @@
-# 🎾 CourtMate - Altan Aydın REST API Görevleri
+# Altan AYDIN'ın REST API Metotları
 
-**REST API Adresi:**  
-`https://api.courtmate.app/v1`
+**API Test Videosu:** [Link buraya eklenecek](https://example.com)
 
-**API Test Videosu:**  
-Video Linki Buraya Eklenecek
+## 1. Sınav Sorularını Getirme
+- **Endpoint:** `GET /exams/placement/questions`
+- **Authentication:** Bearer Token gerekli
+- **Response:** `200 OK` - Sınav soruları listesi
 
-Bu dokümanda, **Seviye Sınavı (AI Destekli)** ve **İlan Yönetimi** modülleri kapsamındaki REST API metotları listelenmektedir.
+## 2. Sınav Sonucunu Gönderme
+- **Endpoint:** `POST /exams/placement/submit`
+- **Request Body:**
+  ```json
+  {
+    "answers": [
+      {
+        "questionId": "q123",
+        "answerText": "Forehand vuruşlarımda oldukça tutarlıyım."
+      }
+    ]
+  }
+  ```
+- **Authentication:** Bearer Token gerekli
+- **Response:** `200 OK` - Sınav başarıyla değerlendirildi ve seviye güncellendi
 
----
+## 3. İlan Arama ve Filtreleme
+- **Endpoint:** `GET /ads/search`
+- **Query Parameters:**
+  - `category` (string, optional) - İlan kategorisi (örn: Tekler, Çiftler)
+  - `location` (string, optional) - Konum bilgisi
+  - `sort` (string, optional) - Sıralama kriteri (newest, oldest, level_asc, level_desc)
+- **Authentication:** Bearer Token gerekli
+- **Response:** `200 OK` - Filtrelenmiş ilan sonuçları
 
-# 📑 İçindekiler
+## 4. İlan Oluşturma
+- **Endpoint:** `POST /ads`
+- **Request Body:**
+  ```json
+  {
+    "title": "Hafta sonu antrenman maçı",
+    "category": "Tekler",
+    "location": "Kort A, Merkez",
+    "requiredLevel": "Orta-İleri (ITN 5)",
+    "matchDate": "2023-11-20T10:00:00Z"
+  }
+  ```
+- **Authentication:** Bearer Token gerekli
+- **Response:** `201 Created` - İlan oluşturuldu
 
-- 📌 Görev Özeti Tablosu
-- 1. Seviye Sınavı (AI Destekli)
-  - 1.1 Sınav Sorularını Getirme
-  - 1.2 Sınav Sonucunu Gönderme
-- 2. İlan Yönetimi ve Başvurular
-  - 2.1 İlan Arama ve Filtreleme
-  - 2.2 İlan Oluşturma
-  - 2.3 İlan Detayı Görüntüleme
-  - 2.4 İlan Güncelleme
-  - 2.5 İlan Silme
-  - 2.6 İlana Başvurma
-  - 2.7 Başvuruları Listeleme
-  - 2.8 Başvuru Onaylama / Reddetme
+## 5. İlan Detayı Görüntüleme
+- **Endpoint:** `GET /ads/{adId}`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+- **Authentication:** Bearer Token gerekli
+- **Response:** `200 OK` - İlan detayları
 
----
+## 6. İlan Güncelleme
+- **Endpoint:** `PATCH /ads/{adId}`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+- **Request Body:**
+  ```json
+  {
+    "title": "Güncellenmiş hafta sonu maçı",
+    "category": "Tekler",
+    "location": "Kort B, Merkez",
+    "requiredLevel": "İleri",
+    "matchDate": "2023-11-21T14:00:00Z"
+  }
+  ```
+- **Authentication:** Bearer Token gerekli (Sadece ilanın sahibi yapabilir)
+- **Response:** `200 OK` - İlan güncellendi
 
-# 📌 Görev Özeti Tablosu
+## 7. İlan Silme
+- **Endpoint:** `DELETE /ads/{adId}`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+- **Authentication:** Bearer Token gerekli (Sadece ilanın sahibi silebilir)
+- **Response:** `204 No Content` - İlan başarıyla silindi
 
-| Modül | Metot | Endpoint | Açıklama | Auth |
-|------|------|------|------|------|
-| Sınav | 🟢 GET | `/exams/placement/questions` | AI destekli seviye belirleme sorularını getirir | 🔒 |
-| Sınav | 🔵 POST | `/exams/placement/submit` | Sınavı değerlendirir ve kullanıcının seviyesini günceller | 🔒 |
-| İlan | 🟢 GET | `/ads/search` | Kategori, konum ve sıralamaya göre ilan arar/filtreler | 🔒 |
-| İlan | 🔵 POST | `/ads` | Yeni bir tenis maçı ilanı oluşturur | 🔒 |
-| İlan | 🟢 GET | `/ads/{adId}` | İlan detayını getirir ve viewCount sayısını artırır | 🔒 |
-| İlan | 🟠 PATCH | `/ads/{adId}` | İlanı günceller (Sadece ilan sahibi) | 🔒 |
-| İlan | 🔴 DELETE | `/ads/{adId}` | İlanı siler (Sadece ilan sahibi) | 🔒 |
-| Başvuru | 🔵 POST | `/ads/{adId}/applications` | İlana katılma başvurusu yapar | 🔒 |
-| Başvuru | 🟢 GET | `/ads/{adId}/applications` | İlana gelen başvuruları listeler | 🔒 |
-| Başvuru | 🟠 PATCH | `/ads/{adId}/applications/{applicationId}` | Başvuruyu onaylar veya reddeder | 🔒 |
+## 8. İlana Başvurma
+- **Endpoint:** `POST /ads/{adId}/applications`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+- **Authentication:** Bearer Token gerekli
+- **Response:** `201 Created` - Başvuru başarıyla alındı
 
-**Not:** 🔒 işareti ilgili endpoint'in **Bearer Token (JWT)** gerektirdiğini belirtir.
+## 9. Başvuruları Listeleme
+- **Endpoint:** `GET /ads/{adId}/applications`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+- **Authentication:** Bearer Token gerekli (Sadece ilanın sahibi görebilir)
+- **Response:** `200 OK` - Başvurular listesi
 
----
-
-# 1. Seviye Sınavı (AI Destekli)
-
-## 1.1 Sınav Sorularını Getirme
-
-AI asistanı veya sistem havuzu tarafından kullanıcının seviyesini ölçmek için hazırlanan soruları istemciye iletir.
-
-**Metot**
+## 10. Başvuru Onaylama/Reddetme
+- **Endpoint:** `PATCH /ads/{adId}/applications/{applicationId}`
+- **Path Parameters:**
+  - `adId` (string, required) - İlanın benzersiz ID'si
+  - `applicationId` (string, required) - Başvurunun benzersiz ID'si
+- **Request Body:**
+  ```json
+  {
+    "status": "approved" 
+  }
+  ```
+- **Authentication:** Bearer Token gerekli (Sadece ilan sahibi işlem yapabilir)
+- **Response:** `200 OK` - Başvuru durumu güncellendi

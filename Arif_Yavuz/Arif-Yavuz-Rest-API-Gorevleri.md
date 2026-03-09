@@ -68,4 +68,15 @@
 
 ## 7. Hesap Silme
 - **Endpoint:** `DELETE /users/{userId}`
-- **Path
+- **Path Parameters:**
+  - `userId` (string, required) - Kullanıcının benzersiz ID'si
+- **Authentication:** Bearer Token gerekli (Sadece hesap sahibi silebilir)
+- **Response:** `204 No Content` - Kullanıcı hesabı başarıyla silindi (Soft Delete)
+
+## 8. İlanları Listeleme
+- **Endpoint:** `GET /ads`
+- **Query Parameters:**
+  - `page` (number, optional) - Sayfa numarası (örn: 1)
+  - `limit` (number, optional) - Sayfa başı ilan sayısı (örn: 10)
+- **Authentication:** Bearer Token gerekli
+- **Response:** `200 OK` - Aktif ilanların sayfalanmış listesi

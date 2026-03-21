@@ -37,7 +37,6 @@ func ConnectDatabase() {
 		&models.PasswordResetToken{},
 		&models.ExamQuestion{},
 		&models.ExamOption{},
-		&models.ExamResult{},
 		&models.ExamSubmission{},
 	)
 	if err != nil {

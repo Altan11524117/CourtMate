@@ -38,6 +38,8 @@ func SetupRoutes(router *gin.Engine) {
 		protected.GET("/exams/placement/questions", controllers.GetExamQuestions)
 		protected.POST("/exams/placement/submit", controllers.SubmitExam)
 		protected.GET("/exams/questions/:id/stats", controllers.GetQuestionStats)
+		protected.POST("/exams/questions/generate", controllers.GenerateQuestionsWithAI)
+protected.POST("/exams/analyze", controllers.AnalyzeExamWithAI)
 
 		// Ads
 		protected.GET("/ads", controllers.ListAds)

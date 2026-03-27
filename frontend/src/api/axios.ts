@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+// TypeScript'in hata vermesini aşmak için (as any) kullanıyoruz:
+const API_URL = (import.meta as any).env.VITE_API_URL || "http://localhost:8000"
+
 const api = axios.create({
-    baseURL: '/v1',
+    baseURL: `${API_URL}/v1`,
     headers: {
         'Content-Type': 'application/json',
     },

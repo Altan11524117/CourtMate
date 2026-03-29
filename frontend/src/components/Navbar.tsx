@@ -76,6 +76,8 @@ export const Navbar: React.FC = () => {
                     {[
                         { label: 'Listings', path: '/ads' },
                         { label: 'Level Exam', path: '/exam' },
+                        { label: 'About', path: '/about' },
+                        { label: 'FAQ', path: '/faq' },
                     ].map(link => (
                         <Link key={link.path} to={link.path} style={{
                             padding: '7px 18px', borderRadius: '8px', fontSize: '14px',
@@ -258,6 +260,8 @@ export const Navbar: React.FC = () => {
                         {[
                             { label: 'Listings', path: '/ads' },
                             { label: 'Level Exam', path: '/exam' },
+                            { label: 'About', path: '/about' },
+                            { label: 'FAQ', path: '/faq' },
                         ].map(link => (
                             <Link key={link.path} to={link.path} style={{
                                 padding: '11px 14px', borderRadius: '8px', fontSize: '15px',

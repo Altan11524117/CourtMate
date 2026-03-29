@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const NotFound: React.FC = () => {
     const navigate = useNavigate()
@@ -70,6 +70,10 @@ const NotFound: React.FC = () => {
                         Go Back
                     </button>
                 </div>
+                <p style={{ marginTop: '28px', fontSize: '13px', color: 'rgba(255,255,255,0.3)' }}>
+                    <Link to="/about" style={{ color: '#40916c', textDecoration: 'none', marginRight: '14px' }}>About</Link>
+                    <Link to="/faq" style={{ color: '#40916c', textDecoration: 'none' }}>FAQ</Link>
+                </p>
             </div>
         </div>
     )

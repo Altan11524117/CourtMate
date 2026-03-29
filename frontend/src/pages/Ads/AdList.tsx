@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { adsApi } from '@/api/ads'
 import { AdCard } from '@/components/AdCard'
-import { Navbar } from '@/components/Navbar' // Import eklendi
+import { Navbar } from '@/components/Navbar'
+import { InteractiveCourtGrid } from '@/components/InteractiveCourtGrid'
 
 const CATEGORIES = ['Singles', 'Doubles', 'Training', 'Tournament']
 const SORT_OPTIONS = [
@@ -35,27 +36,21 @@ const AdList: React.FC = () => {
         <div style={{ minHeight: '100vh', backgroundColor: '#0a0f0a', fontFamily: 'var(--font-body)' }}>
             <Navbar /> {/* Navbar buraya eklendi */}
 
-            {/* Hero banner */}
-            <div style={{
-                background: 'linear-gradient(160deg, #0f1f0f 0%, #1a3d2b 60%, #0f1a0f 100%)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
-                padding: '56px 24px 48px',
-                position: 'relative',
-                overflow: 'hidden',
-            }}>
-                {/* Grid decoration */}
-                <div style={{
-                    position: 'absolute', inset: 0, pointerEvents: 'none',
-                    backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
-                    backgroundSize: '60px 60px',
-                }} />
+            <InteractiveCourtGrid
+                style={{
+                    background: 'linear-gradient(160deg, #0f1f0f 0%, #1a3d2b 60%, #0f1a0f 100%)',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    padding: '56px 24px 48px',
+                }}
+                innerStyle={{ maxWidth: '1100px', margin: '0 auto', position: 'relative' }}
+                baseLineAlpha={0.025}
+            >
                 <div style={{
                     position: 'absolute', width: '500px', height: '500px', borderRadius: '50%',
                     background: 'radial-gradient(circle, rgba(64,145,108,0.12) 0%, transparent 65%)',
                     top: '-100px', right: '-80px', pointerEvents: 'none',
                 }} />
-
-                <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative' }}>
+                <div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', marginBottom: '36px' }}>
                         <div>
                             <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 500 }}>
@@ -167,7 +162,7 @@ const AdList: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </InteractiveCourtGrid>
 
             {/* Content */}
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 24px' }}>

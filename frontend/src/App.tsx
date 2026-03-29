@@ -13,6 +13,8 @@ import AdDetail from '@/pages/Ads/AdDetail'
 import AdForm from '@/pages/Ads/AdForm'
 import ProfilePage from '@/pages/Profile/ProfilePage'
 import NotFound from '@/pages/NotFound/NotFound'
+import AboutPage from '@/pages/Info/AboutPage'
+import FAQPage from '@/pages/Info/FAQPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +44,8 @@ export default function App() {
           <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
           <Route path="/register" element={<PublicOnly><Register /></PublicOnly>} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FAQPage />} />
 
           {/* Protected */}
           <Route path="/ads" element={<Protected><AdList /></Protected>} />

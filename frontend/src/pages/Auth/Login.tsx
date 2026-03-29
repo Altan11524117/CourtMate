@@ -7,6 +7,8 @@ import { authApi } from '@/api/auth'
 import { usersApi } from '@/api/users'
 import { useAuthStore } from '@/store/authStore'
 import { getErrorMessage } from '@/utils'
+import { InteractiveCourtGrid } from '@/components/InteractiveCourtGrid'
+import { AuthPageLayout } from '@/components/AuthPageLayout'
 
 const schema = z.object({
     email: z.string().email('Please enter a valid email'),
@@ -39,35 +41,23 @@ const Login: React.FC = () => {
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            backgroundColor: '#0a0f0a',
-            fontFamily: 'var(--font-body)',
-        }}>
-            {/* Left decorative panel */}
-            <div style={{
-                display: 'none',
-                flex: '1',
-                background: 'linear-gradient(145deg, #0f1f0f 0%, #1a3d2b 50%, #0f2a1a 100%)',
-                padding: '48px',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                position: 'relative',
-                overflow: 'hidden',
-            }} className="auth-panel">
-
-                {/* Grid lines decoration */}
-                <div style={{
-                    position: 'absolute', inset: 0,
-                    backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
-          `,
-                    backgroundSize: '60px 60px',
-                }} />
-
-                {/* Glow orb */}
+        <AuthPageLayout>
+            <InteractiveCourtGrid
+                className="auth-panel"
+                style={{
+                    display: 'none',
+                    flex: '1',
+                    background: 'linear-gradient(145deg, #0f1f0f 0%, #1a3d2b 50%, #0f2a1a 100%)',
+                    padding: '48px 48px clamp(40px, 6vh, 72px) 48px',
+                }}
+                innerStyle={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    flex: 1,
+                    minHeight: 0,
+                }}
+            >
                 <div style={{
                     position: 'absolute',
                     width: '400px', height: '400px',
@@ -77,7 +67,6 @@ const Login: React.FC = () => {
                     pointerEvents: 'none',
                 }} />
 
-                {/* Logo */}
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
                         width: '42px', height: '42px', borderRadius: '12px',
@@ -95,7 +84,6 @@ const Login: React.FC = () => {
                     </span>
                 </div>
 
-                {/* Hero text */}
                 <div style={{ position: 'relative' }}>
                     <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '20px', fontWeight: 500 }}>
                         Tennis Partner Network
@@ -116,7 +104,6 @@ const Login: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Level badges */}
                 <div style={{ position: 'relative', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                     {['Beginner · ITN 10', 'Intermediate · ITN 7', 'Advanced · ITN 3'].map((l) => (
                         <span key={l} style={{
@@ -127,22 +114,11 @@ const Login: React.FC = () => {
                         }}>{l}</span>
                     ))}
                 </div>
-            </div>
+            </InteractiveCourtGrid>
 
-            {/* Right form panel */}
-            <div style={{
-                width: '100%',
-                maxWidth: '480px',
-                margin: '0 auto',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '40px 32px',
-            }} className="auth-form-panel">
-                <div style={{ width: '100%' }}>
-
-                    {/* Mobile logo */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '40px' }} className="auth-mobile-logo">
+            <div className="auth-form-column">
+                <div className="auth-form-card">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }} className="auth-mobile-logo">
                         <div style={{
                             width: '36px', height: '36px', borderRadius: '10px',
                             background: 'linear-gradient(135deg, #40916c, #c9a96e)',
@@ -159,40 +135,42 @@ const Login: React.FC = () => {
                         </span>
                     </div>
 
-                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', color: 'white', marginBottom: '6px', fontWeight: 700 }}>
+                    <div className="auth-form-eyebrow" />
+                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px, 5vw, 28px)', color: 'white', marginBottom: '8px', fontWeight: 700, lineHeight: 1.2 }}>
                         Welcome back
                     </h2>
-                    <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', marginBottom: '36px' }}>
+                    <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '28px', lineHeight: 1.5 }}>
                         Sign in to your account to continue
                     </p>
 
-                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
 
-                        {/* Email */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.7)' }}>Email</label>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.72)' }}>Email</label>
                             <input
                                 type="email"
                                 placeholder="you@example.com"
                                 {...register('email')}
+                                className="auth-field-input"
                                 style={{
-                                    padding: '12px 16px', borderRadius: '10px', fontSize: '14px',
-                                    backgroundColor: 'rgba(255,255,255,0.06)',
-                                    border: `1.5px solid ${errors.email ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                                    color: 'white', outline: 'none', width: '100%', boxSizing: 'border-box',
-                                    fontFamily: 'var(--font-body)', transition: 'border-color 0.2s',
+                                    padding: '13px 16px', borderRadius: '12px', fontSize: '15px',
+                                    backgroundColor: 'rgba(255,255,255,0.07)',
+                                    border: `1.5px solid ${errors.email ? '#f87171' : 'rgba(255,255,255,0.12)'}`,
+                                    color: 'white', minHeight: '48px',
                                 }}
-                                onFocus={e => e.currentTarget.style.borderColor = errors.email ? '#f87171' : 'rgba(64,145,108,0.7)'}
-                                onBlur={e => e.currentTarget.style.borderColor = errors.email ? '#f87171' : 'rgba(255,255,255,0.1)'}
+                                onFocus={e => { e.currentTarget.style.borderColor = errors.email ? '#f87171' : 'rgba(64,145,108,0.75)' }}
+                                onBlur={e => { e.currentTarget.style.borderColor = errors.email ? '#f87171' : 'rgba(255,255,255,0.12)' }}
                             />
                             {errors.email && <p style={{ fontSize: '12px', color: '#f87171', margin: 0 }}>{errors.email.message}</p>}
                         </div>
 
-                        {/* Password */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <label style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.7)' }}>Password</label>
-                                <Link to="/reset-password" style={{ fontSize: '12px', color: '#40916c', textDecoration: 'none' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.72)' }}>Password</label>
+                                <Link
+                                    to="/reset-password"
+                                    style={{ fontSize: '12px', color: '#6fcfa0', textDecoration: 'none', fontWeight: 600 }}
+                                >
                                     Forgot password?
                                 </Link>
                             </div>
@@ -201,21 +179,23 @@ const Login: React.FC = () => {
                                     type={showPass ? 'text' : 'password'}
                                     placeholder="••••••••"
                                     {...register('password')}
+                                    className="auth-field-input"
                                     style={{
-                                        padding: '12px 44px 12px 16px', borderRadius: '10px', fontSize: '14px',
-                                        backgroundColor: 'rgba(255,255,255,0.06)',
-                                        border: `1.5px solid ${errors.password ? '#f87171' : 'rgba(255,255,255,0.1)'}`,
-                                        color: 'white', outline: 'none', width: '100%', boxSizing: 'border-box',
-                                        fontFamily: 'var(--font-body)', transition: 'border-color 0.2s',
+                                        padding: '13px 48px 13px 16px', borderRadius: '12px', fontSize: '15px',
+                                        backgroundColor: 'rgba(255,255,255,0.07)',
+                                        border: `1.5px solid ${errors.password ? '#f87171' : 'rgba(255,255,255,0.12)'}`,
+                                        color: 'white', minHeight: '48px',
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = errors.password ? '#f87171' : 'rgba(64,145,108,0.7)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = errors.password ? '#f87171' : 'rgba(255,255,255,0.1)'}
+                                    onFocus={e => { e.currentTarget.style.borderColor = errors.password ? '#f87171' : 'rgba(64,145,108,0.75)' }}
+                                    onBlur={e => { e.currentTarget.style.borderColor = errors.password ? '#f87171' : 'rgba(255,255,255,0.12)' }}
                                 />
                                 <button type="button" onClick={() => setShowPass(!showPass)} style={{
                                     position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
-                                    background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)',
-                                    padding: 0, display: 'flex',
-                                }}>
+                                    background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)',
+                                    padding: '6px', display: 'flex', borderRadius: '8px',
+                                }}
+                                    aria-label={showPass ? 'Hide password' : 'Show password'}
+                                >
                                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         {showPass
                                             ? <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></>
@@ -229,37 +209,36 @@ const Login: React.FC = () => {
 
                         {error && (
                             <div style={{
-                                padding: '12px 16px', borderRadius: '10px',
+                                padding: '12px 16px', borderRadius: '12px',
                                 backgroundColor: 'rgba(248,113,113,0.1)',
                                 border: '1px solid rgba(248,113,113,0.3)',
-                                color: '#fca5a5', fontSize: '13px',
+                                color: '#fca5a5', fontSize: '13px', lineHeight: 1.45,
                             }}>{error}</div>
                         )}
 
-                        <button type="submit" disabled={isSubmitting} style={{
-                            marginTop: '8px', padding: '13px', borderRadius: '10px', fontSize: '15px',
+                        <button type="submit" disabled={isSubmitting} className="auth-submit-button" style={{
+                            marginTop: '6px', padding: '15px', borderRadius: '12px', fontSize: '16px',
                             fontFamily: 'var(--font-body)', fontWeight: 600, cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                            border: 'none', opacity: isSubmitting ? 0.7 : 1,
-                            background: 'linear-gradient(135deg, #1a3d2b, #2d6a4f)',
-                            color: 'white', transition: 'opacity 0.2s, transform 0.1s',
-                            width: '100%',
+                            border: 'none', opacity: isSubmitting ? 0.72 : 1,
+                            background: 'linear-gradient(145deg, #1f4a32, #2d6a4f)',
+                            color: 'white',
+                            width: '100%', minHeight: '50px',
+                            boxShadow: '0 4px 16px rgba(26, 61, 43, 0.35)',
                         }}
-                            onMouseEnter={e => !isSubmitting && (e.currentTarget.style.opacity = '0.9')}
-                            onMouseLeave={e => !isSubmitting && (e.currentTarget.style.opacity = '1')}
                         >
                             {isSubmitting ? 'Signing in...' : 'Sign In'}
                         </button>
                     </form>
 
-                    <p style={{ textAlign: 'center', fontSize: '13px', color: 'rgba(255,255,255,0.35)', marginTop: '28px' }}>
-                        Don't have an account?{' '}
-                        <Link to="/register" style={{ color: '#40916c', textDecoration: 'none', fontWeight: 600 }}>
+                    <p style={{ textAlign: 'center', fontSize: '14px', color: 'rgba(255,255,255,0.42)', marginTop: '26px', marginBottom: 0, lineHeight: 1.5 }}>
+                        Don&apos;t have an account?{' '}
+                        <Link to="/register" style={{ color: '#6fcfa0', textDecoration: 'none', fontWeight: 700 }}>
                             Create one
                         </Link>
                     </p>
                 </div>
             </div>
-        </div>
+        </AuthPageLayout>
     )
 }
 

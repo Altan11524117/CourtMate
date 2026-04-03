@@ -135,7 +135,7 @@ func ResetPassword(c *gin.Context) {
 
 	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 	params := &resend.SendEmailRequest{
-		From:    "CourtMate <onboarding@resend.dev>",
+		From:    "CourtMate <[EMAIL_ADDRESS]>",
 		To: []string{user.Email},
 		Subject: "CourtMate - Password Reset",
 		Html: `

@@ -1,5 +1,6 @@
 # CourtMate
 
+![CourtMate Afişi](<./Court Mate Afiş.png>)
 
 ## Proje Hakkında
 
@@ -9,7 +10,7 @@ Platform, kullanıcıları yapay zeka (AI) destekli bir algoritma yardımıyla t
 
 
 **Proje Kategorisi:** 
-Spor alaninda ozellikle tennis alaninda parntere bulma konusunda ceilen sikintiyi cozen bir proje
+Spor alanında özellikle tennis alanında partner bulma konusundaki sıkıntıyı çözen bir proje.
 
 **Referans Uygulama:** 
 > [Örnek Referans Uygulama](https://playo.co/)

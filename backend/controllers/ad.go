@@ -154,7 +154,7 @@ func UpdateAd(c *gin.Context) {
 		return
 	}
 
-	
+
 	matchDate, err := time.Parse(time.RFC3339, input.MatchDate)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid matchDate format. Use ISO8601 e.g. 2026-04-16T18:02:00Z"})
@@ -169,6 +169,12 @@ func UpdateAd(c *gin.Context) {
 		"required_level": input.RequiredLevel,
 		"match_date":     matchDate,
 	})
+
+	
+	if err := config.DB.First(&ad, "id = ?", adID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ad updated but failed to fetch new data"})
+		return
+	}
 
 	c.JSON(http.StatusOK, ad)
 }

@@ -68,6 +68,10 @@ https://github.com/user-attachments/assets/85c30762-be6a-4a9d-bb66-0524061244a0
 * **Açıklama:** Gelen başvuruyu ona
 
 
-https://github.com/user-attachments/assets/4ffcbd72-7397-45e0-b8d2-8627a42a9391
+
+
+https://github.com/user-attachments/assets/83ab3541-5cb3-47bd-8083-9646e7232921
+
+
 
 

@@ -39,6 +39,11 @@ https://github.com/user-attachments/assets/d6b5c156-4e5a-43f9-b581-167cc3113fc9
 * **API Metodu:** `PATCH /ads/{adId}`
 * **Açıklama:** Yayınlanmış ilanı günceller. Kullanıcının, gerçekten ilanın sahibi olup olmadığı kontrol edilir, değilse 403 Forbidden döndürülür.
 
+
+https://github.com/user-attachments/assets/6e89269a-06c7-4942-8570-dac326a0cc74
+
+
+
 **İlan Silme** (Altan AYDIN)
 * **API Metodu:** `DELETE /ads/{adId}`
 * **Açıklama:** İlanı sistemden kaldırır. İlan ve ilana bağlı başvurular kaskad (cascade) silme veya soft delete mantığıyla temizlenir.

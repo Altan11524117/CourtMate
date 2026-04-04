@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
                     <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '0 32px 32px' }}>
 
                         {/* Avatar row */}
-                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '20px', marginTop: '-28px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '20px', marginTop: '-28px', position: 'relative', zIndex: 10 }}>
                             <div style={{
                                 width: '64px', height: '64px', borderRadius: '18px', flexShrink: 0,
                                 background: 'linear-gradient(135deg, #40916c, #c9a96e)',

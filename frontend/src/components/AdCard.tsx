@@ -13,7 +13,10 @@ const statusStyle = (s: string): React.CSSProperties => ({
     cancelled: { backgroundColor: 'rgba(248,113,113,0.12)', color: '#fca5a5', border: '1px solid rgba(248,113,113,0.2)' },
 }[s] ?? { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)' })
 
-const levelStyle = (l: string): React.CSSProperties => {
+const levelStyle = (l: string | undefined | null): React.CSSProperties => {
+    if (l == null || l === '') {
+        return { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.1)' }
+    }
     if (l.includes('Advanced')) return { backgroundColor: 'rgba(64,145,108,0.15)', color: '#6fcfa0', border: '1px solid rgba(64,145,108,0.2)' }
     if (l.includes('Upper-Intermediate')) return { backgroundColor: 'rgba(59,130,246,0.12)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' }
     if (l.includes('Intermediate')) return { backgroundColor: 'rgba(201,169,110,0.15)', color: '#e4c07a', border: '1px solid rgba(201,169,110,0.25)' }

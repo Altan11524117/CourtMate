@@ -1,6 +1,8 @@
 // Format date to readable string
-export const formatDate = (dateStr: string): string => {
+export const formatDate = (dateStr: string | undefined | null): string => {
+    if (dateStr == null || dateStr === '') return '—'
     const date = new Date(dateStr)
+    if (Number.isNaN(date.getTime())) return '—'
     return date.toLocaleDateString('tr-TR', {
         day: 'numeric',
         month: 'long',
@@ -11,13 +13,34 @@ export const formatDate = (dateStr: string): string => {
 }
 
 // Format match date short
-export const formatDateShort = (dateStr: string): string => {
+export const formatDateShort = (dateStr: string | undefined | null): string => {
+    if (dateStr == null || dateStr === '') return '—'
     const date = new Date(dateStr)
+    if (Number.isNaN(date.getTime())) return '—'
     return date.toLocaleDateString('tr-TR', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
     })
+}
+
+/** Safe ISO string for datetime-local inputs; never throws. */
+export const toDatetimeLocalValue = (iso: string | undefined | null): string => {
+    if (iso == null || iso === '') return ''
+    const d = new Date(iso)
+    if (Number.isNaN(d.getTime())) return ''
+    try {
+        return d.toISOString().slice(0, 16)
+    } catch {
+        return ''
+    }
+}
+
+/** Safe ISO for API payloads from datetime-local. */
+export const fromDatetimeLocalToISO = (local: string): string => {
+    const d = new Date(local)
+    if (Number.isNaN(d.getTime())) return new Date().toISOString()
+    return d.toISOString()
 }
 
 // Get level badge color
@@ -43,8 +66,10 @@ export const getStatusColor = (status: string): string => {
 }
 
 // Truncate text
-export const truncate = (str: string, n: number): string =>
-    str.length > n ? str.slice(0, n) + '...' : str
+export const truncate = (str: string | undefined | null, n: number): string => {
+    if (str == null || str === '') return ''
+    return str.length > n ? str.slice(0, n) + '...' : str
+}
 
 // Get error message from axios error
 export const getErrorMessage = (error: unknown): string => {

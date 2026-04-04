@@ -6,7 +6,10 @@ import { useAuthStore } from '@/store/authStore'
 import { Navbar } from '@/components/Navbar'
 import { formatDate, getErrorMessage } from '@/utils'
 
-const levelStyle = (l: string): React.CSSProperties => {
+const levelStyle = (l: string | undefined | null): React.CSSProperties => {
+    if (l == null || l === '') {
+        return { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.1)' }
+    }
     if (l.includes('Advanced')) return { backgroundColor: 'rgba(64,145,108,0.15)', color: '#6fcfa0', border: '1px solid rgba(64,145,108,0.2)' }
     if (l.includes('Upper-Intermediate')) return { backgroundColor: 'rgba(59,130,246,0.12)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' }
     if (l.includes('Intermediate')) return { backgroundColor: 'rgba(201,169,110,0.15)', color: '#e4c07a', border: '1px solid rgba(201,169,110,0.25)' }
@@ -28,7 +31,7 @@ const AdDetail: React.FC = () => {
     const [applyError, setApplyError] = useState('')
     const [applySuccess, setApplySuccess] = useState(false)
 
-    const { data: ad, isLoading, error } = useQuery({
+    const { data: ad, isPending: adLoading, error } = useQuery({
         queryKey: ['ad', adId],
         queryFn: () => adsApi.getDetail(adId!),
         enabled: !!adId,
@@ -64,14 +67,14 @@ const AdDetail: React.FC = () => {
             <Navbar />
 
             {/* Loading */}
-            {isLoading && (
+            {adLoading && (
                 <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px' }}>
                     <div style={{ height: '400px', borderRadius: '20px', backgroundColor: 'rgba(255,255,255,0.04)', animation: 'pulse 1.8s ease-in-out infinite' }} />
                 </div>
             )}
 
             {/* Error */}
-            {(error || (!isLoading && !ad)) && (
+            {(error || (!adLoading && !ad)) && (
                 <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 24px', textAlign: 'center' }}>
                     <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎾</div>
                     <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'white', marginBottom: '10px' }}>Listing not found</h3>
@@ -403,7 +406,9 @@ const AdDetail: React.FC = () => {
                                                         : { backgroundColor: 'rgba(248,113,113,0.12)', color: '#fca5a5', border: '1px solid rgba(248,113,113,0.2)' }
                                                     ),
                                                 }}>
-                                                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                                                    {app.status
+                                                        ? app.status.charAt(0).toUpperCase() + app.status.slice(1)
+                                                        : '—'}
                                                 </span>
                                             )}
                                         </div>

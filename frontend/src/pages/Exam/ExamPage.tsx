@@ -17,11 +17,13 @@ const ExamPage: React.FC = () => {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
 
-    const { data: questions = [], isLoading } = useQuery({
+    const { data: questions = [], isPending, isFetching, isError, error: queryError } = useQuery({
         queryKey: ['exam-questions'],
         queryFn: examsApi.getQuestions,
         enabled: started,
     })
+
+    const examLoading = started && (isPending || isFetching) && questions.length === 0
 
     const currentQ: ExamQuestion | undefined = questions[current]
     const progress = questions.length > 0 ? (current / questions.length) * 100 : 0
@@ -162,7 +164,7 @@ const ExamPage: React.FC = () => {
     }
 
     // ── Loading ───────────────────────────────────────────────────────────────
-    if (isLoading) {
+    if (examLoading) {
         return (
             <div style={{ minHeight: '100vh', backgroundColor: '#0a0f0a', fontFamily: 'var(--font-body)' }}>
                 <Navbar />
@@ -185,16 +187,19 @@ const ExamPage: React.FC = () => {
         )
     }
 
-    // ── No questions ──────────────────────────────────────────────────────────
-    if (questions.length === 0) {
+    // ── Error / no questions ─────────────────────────────────────────────────
+    if (isError || (!examLoading && questions.length === 0)) {
+        const msg = isError
+            ? (queryError instanceof Error ? queryError.message : 'Could not load exam questions.')
+            : 'No questions found. Please try again later.'
         return (
             <div style={{ minHeight: '100vh', backgroundColor: '#0a0f0a', fontFamily: 'var(--font-body)' }}>
                 <Navbar />
                 <div style={{ textAlign: 'center', padding: '80px 24px' }}>
                     <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '14px', marginBottom: '20px' }}>
-                        No questions found. Please try again later.
+                        {msg}
                     </p>
-                    <button onClick={() => navigate('/ads')} style={{
+                    <button type="button" onClick={() => navigate('/ads')} style={{
                         padding: '11px 24px', borderRadius: '10px', fontSize: '14px',
                         fontWeight: 600, cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)',
                         backgroundColor: 'transparent', color: 'rgba(255,255,255,0.6)',
@@ -260,7 +265,7 @@ const ExamPage: React.FC = () => {
                                     {currentQ.difficultyLevel === 'hard' ? 'Hard' : currentQ.difficultyLevel === 'medium' ? 'Medium' : 'Easy'}
                                 </span>
                                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.2)' }}>
-                                    {currentQ.pointValue} pts
+                                    {currentQ.pointValue ?? 0} pts
                                 </span>
                             </div>
                             <h2 style={{
@@ -273,7 +278,7 @@ const ExamPage: React.FC = () => {
 
                         {/* Options */}
                         <div style={{ padding: '20px 28px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {currentQ.options.map((opt, idx) => {
+                            {(currentQ.options ?? []).map((opt, idx) => {
                                 const selected = answers[currentQ.id] === opt.id
                                 return (
                                     <button key={opt.id} onClick={() => handleAnswer(currentQ.id, opt.id)} style={{
@@ -294,7 +299,7 @@ const ExamPage: React.FC = () => {
                                             color: selected ? 'white' : 'rgba(255,255,255,0.35)',
                                             border: `1px solid ${selected ? '#40916c' : 'rgba(255,255,255,0.1)'}`,
                                         }}>
-                                            {letters[idx]}
+                                            {letters[idx] ?? String.fromCharCode(65 + idx)}
                                         </span>
                                         <span style={{
                                             fontSize: '14px', lineHeight: 1.45,

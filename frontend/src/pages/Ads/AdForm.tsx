@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { adsApi } from '@/api/ads'
 import { Navbar } from '@/components/Navbar'
-import { getErrorMessage } from '@/utils'
+import { getErrorMessage, toDatetimeLocalValue, fromDatetimeLocalToISO } from '@/utils'
 
 const LEVELS = [
     'Beginner (ITN 10)',
@@ -54,13 +54,11 @@ const AdForm: React.FC = () => {
     useEffect(() => {
         if (existing) {
             reset({
-                title: existing.title,
-                category: existing.category,
-                location: existing.location,
-                requiredLevel: existing.requiredLevel,
-                matchDate: existing.matchDate
-                    ? new Date(existing.matchDate).toISOString().slice(0, 16)
-                    : '',
+                title: existing.title ?? '',
+                category: existing.category ?? '',
+                location: existing.location ?? '',
+                requiredLevel: existing.requiredLevel ?? '',
+                matchDate: toDatetimeLocalValue(existing.matchDate),
             })
         }
     }, [existing, reset])
@@ -69,7 +67,7 @@ const AdForm: React.FC = () => {
         mutationFn: (data: FormData) => adsApi.create({
             ...data, category: data.category ?? '',
             requiredLevel: data.requiredLevel ?? '',
-            matchDate: new Date(data.matchDate).toISOString(),
+            matchDate: fromDatetimeLocalToISO(data.matchDate),
         }),
         onSuccess: (ad) => navigate(`/ads/${ad.id}`),
         onError: (err) => setError(getErrorMessage(err)),
@@ -79,7 +77,7 @@ const AdForm: React.FC = () => {
         mutationFn: (data: FormData) => adsApi.update(adId!, {
             ...data, category: data.category ?? '',
             requiredLevel: data.requiredLevel ?? '',
-            matchDate: new Date(data.matchDate).toISOString(),
+            matchDate: fromDatetimeLocalToISO(data.matchDate),
         }),
         onSuccess: () => navigate(`/ads/${adId}`),
         onError: (err) => setError(getErrorMessage(err)),

@@ -31,9 +31,15 @@ html {
 
 body {
     font-family: var(--font-body);
-    background-color: var(--color-court-cream);
+    background-color: #0a0f0a;
     color: var(--color-court-dark);
     -webkit-font-smoothing: antialiased;
+}
+
+#root {
+    min-height: 100dvh;
+    min-height: 100vh;
+    background-color: #0a0f0a;
 }
 
 @keyframes fadeUp {

@@ -17,7 +17,10 @@ const levelEmoji: Record<string, string> = {
     'Beginner (ITN 10)': '🌱',
 }
 
-const levelStyle = (l: string): React.CSSProperties => {
+const levelStyle = (l: string | undefined | null): React.CSSProperties => {
+    if (l == null || l === '') {
+        return { backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.1)' }
+    }
     if (l.includes('Advanced')) return { backgroundColor: 'rgba(64,145,108,0.15)', color: '#6fcfa0', border: '1px solid rgba(64,145,108,0.25)' }
     if (l.includes('Upper-Intermediate')) return { backgroundColor: 'rgba(59,130,246,0.12)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)' }
     if (l.includes('Intermediate')) return { backgroundColor: 'rgba(201,169,110,0.15)', color: '#e4c07a', border: '1px solid rgba(201,169,110,0.25)' }
@@ -43,9 +46,10 @@ const ExamResultPage: React.FC = () => {
         setAnalyzing(true)
         try {
             const { questions, answers } = state
-            const payload = questions.map(q => ({
-                questionText: q.text,
-                selectedText: q.options.find(o => o.id === answers[q.id])?.text ?? '',
+            const list = questions ?? []
+            const payload = list.map(q => ({
+                questionText: q.text ?? '',
+                selectedText: (q.options ?? []).find(o => o.id === answers[q.id])?.text ?? '',
                 isCorrect: false,
             }))
             const res = await examsApi.analyzeExam(payload)

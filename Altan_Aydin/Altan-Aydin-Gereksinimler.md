@@ -16,9 +16,11 @@ https://github.com/user-attachments/assets/17b99dad-9438-4454-9e2a-2b9eae40aad3
 * **API Metodu:** `GET /ads/search`
 * **Açıklama:** İlanlar içinde detaylı arama ve filtreleme yapar. Kategori, konum, sıralama gibi URL query parametrelerine göre süzülmüş sonuçları döndürür.
 
+
 **İlan Oluşturma** (Altan AYDIN)
 * **API Metodu:** `POST /ads`
 * **Açıklama:** Yeni bir ilan oluşturur. İstek yapan kullanıcının ID'si otomatik olarak ilanın ownerId (sahibi) alanına atanır.
+  
 
 **İlan Detayı Görüntüleme** (Altan AYDIN)
 * **API Metodu:** `GET /ads/{adId}`

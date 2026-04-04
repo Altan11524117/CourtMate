@@ -1,5 +1,3 @@
-
-https://github.com/user-attachments/assets/0d379f48-7f47-4de7-9577-679f731d6d4c
 **Sınav Sorularını Getirme** (Altan AYDIN)
 * **API Metodu:** `GET /exams/placement/questions`
 * **Açıklama:** Seviye belirleme sorularını getirir. AI asistanı veya sistem havuzu tarafından kullanıcının seviyesini ölçmek için hazırlanan soruları istemciye iletir yada kedni sorular yarartir genel seviye dagilimini analiz ederek kullaniciyi belli bir seviyeye atar ai ana temasi genel kullanici havuzu  seviyesine dayali seviyelendirme yapip  kullanici eslesme oranini artirmak.

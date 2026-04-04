@@ -18,8 +18,8 @@ const ExamPage: React.FC = () => {
     const [error, setError] = useState('')
 
     const { data: questionsRaw, isPending, isFetching, isError, error: queryError } = useQuery({
-        queryKey: ['exam-questions'],
-        queryFn: examsApi.getQuestions,
+        queryKey: ['exam-questions', user?.level],
+        queryFn: () => examsApi.getQuestions(user?.level),
         enabled: started,
     })
     const questions = questionsRaw ?? []

@@ -2,10 +2,26 @@ import api from './axios'
 import type { ExamQuestion, ExamResult } from '@/types'
 
 export const examsApi = {
-    getQuestions: async (): Promise<ExamQuestion[]> => {
+    getQuestions: async (userLevel?: string): Promise<ExamQuestion[]> => {
         const res = await api.get('/exams/placement/questions')
         const data = res.data?.payload !== undefined ? res.data.payload : res.data
-        return Array.isArray(data) ? data : []
+        let questions = Array.isArray(data) ? data : []
+
+        if (questions.length === 0) {
+            let difficulty = 'easy'
+            if (userLevel?.includes('Intermediate')) difficulty = 'medium'
+            if (userLevel?.includes('Advanced')) difficulty = 'hard'
+
+            try {
+                const genRes = await api.post('/exams/questions/generate', { difficultyLevel: difficulty, count: 5 })
+                const genData = genRes.data?.questions !== undefined ? genRes.data.questions : genRes.data
+                questions = Array.isArray(genData) ? genData : []
+            } catch (err) {
+                console.error("Failed to generate questions", err)
+            }
+        }
+
+        return questions
     },
 
     submitExam: async (answers: {

@@ -42,6 +42,10 @@
 * **API Metodu:** `POST /exams/placement/submit`
 * **Açıklama:** Sınav yanıtlarını gönderir ve seviyeyi belirler. Cevaplar analiz edilir, başarı puanı hesaplanır ve kullanıcının veritabanındaki "Seviye" bilgisi belli bir sureligine kalıcı olarak güncellenir. 
 
+
+https://github.com/user-attachments/assets/a61e8053-aa1b-4008-80e0-63ba01640cca
+
+
 ---
 
 ## 3. İlan Yönetimi
@@ -54,9 +58,17 @@
 * **API Metodu:** `GET /ads/search`
 * **Açıklama:** İlanlar içinde detaylı arama ve filtreleme yapar. Kategori, konum, sıralama gibi URL query parametrelerine göre süzülmüş sonuçları döndürür.
 
+
+https://github.com/user-attachments/assets/8bd6c341-87d2-4799-8679-9575de41d226
+
+
 **İlan Oluşturma** (Altan AYDIN)
 * **API Metodu:** `POST /ads`
 * **Açıklama:** Yeni bir ilan oluşturur. İstek yapan kullanıcının ID'si otomatik olarak ilanın ownerId (sahibi) alanına atanır.
+
+
+https://github.com/user-attachments/assets/48eee76f-96f7-45fc-b5dc-74cdb45e5f9d
+
 
 **İlan Detayı Görüntüleme** (Altan AYDIN)
 * **API Metodu:** `GET /ads/{adId}`
@@ -66,13 +78,25 @@
 * **API Metodu:** `PATCH /ads/{adId}`
 * **Açıklama:** Yayınlanmış ilanı günceller. Kullanıcının, gerçekten ilanın sahibi olup olmadığı kontrol edilir, değilse 403 Forbidden döndürülür.
 
+
+https://github.com/user-attachments/assets/31e7b80a-9cea-4856-8978-aae65cc2ac6d
+
+
 **İlan Silme** (Altan AYDIN)
 * **API Metodu:** `DELETE /ads/{adId}`
 * **Açıklama:** İlanı sistemden kaldırır. İlan ve ilana bağlı başvurular kaskad (cascade) silme veya soft delete mantığıyla temizlenir.
 
+
+https://github.com/user-attachments/assets/c436a3d7-08c9-4dbc-9605-6a565e9317c3
+
+
 **İlana Başvurma** (Altan AYDIN)
 * **API Metodu:** `POST /ads/{adId}/applications`
 * **Açıklama:** İlana katılma isteği gönderir. Kullanıcının ilgilendiği ilana başvuru yapmasını sağlar. İş kuralı gereği kullanıcı kendi ilanına başvuramaz. Başvuru durumu başlangıçta "bekliyor" (pending) olarak atanır.
+
+
+https://github.com/user-attachments/assets/0f8e2704-899d-47e3-9952-de5cb2b91f7a
+
 
 **Başvuruları Listeleme** (Altan AYDIN)
 * **API Metodu:** `GET /ads/{adId}/applications`
@@ -81,3 +105,9 @@
 **Başvuru Onaylama/Reddetme** (Altan AYDIN)
 * **API Metodu:** `PATCH /ads/{adId}/applications/{applicationId}`
 * **Açıklama:** Gelen başvuruyu onaylar veya reddeder. İlan sahibinin kararına göre başvurunun durumunu günceller.
+
+
+https://github.com/user-attachments/assets/e4556ae7-394a-4a1d-9448-71641a97828e
+
+
+  

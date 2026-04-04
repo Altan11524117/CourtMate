@@ -154,11 +154,20 @@ func UpdateAd(c *gin.Context) {
 		return
 	}
 
+	
+	matchDate, err := time.Parse(time.RFC3339, input.MatchDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid matchDate format. Use ISO8601 e.g. 2026-04-16T18:02:00Z"})
+		return
+	}
+
+	
 	config.DB.Model(&ad).Updates(map[string]interface{}{
 		"title":          input.Title,
 		"category":       input.Category,
 		"location":       input.Location,
 		"required_level": input.RequiredLevel,
+		"match_date":     matchDate,
 	})
 
 	c.JSON(http.StatusOK, ad)

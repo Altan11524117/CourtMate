@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
-	"courtmate-backend/config" // Import yolları go.mod'daki isme göre düzeltildi
-	"courtmate-backend/routes" // Import yolları go.mod'daki isme göre düzeltildi
-	
+	"courtmate-backend/config"
+	"courtmate-backend/routes"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -25,6 +27,21 @@ func main() {
 
 	// Gin router'ı oluştur
 	r := gin.Default()
+
+	// CORS ayarları
+	allowedOrigins := []string{"http://localhost:5173"}
+	if frontendURL := os.Getenv("FRONTEND_URL"); frontendURL != "" {
+		allowedOrigins = append(allowedOrigins, frontendURL)
+	}
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     allowedOrigins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Rotaları ayarla
 	routes.SetupRoutes(r)

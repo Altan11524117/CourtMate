@@ -7,7 +7,7 @@ export const adsApi = {
         offset?: number
     }): Promise<Ad[]> => {
         const res = await api.get('/ads', { params })
-        return res.data
+        return res.data ?? []
     },
 
     search: async (params?: {
@@ -16,7 +16,7 @@ export const adsApi = {
         sort?: 'newest' | 'oldest' | 'level_asc' | 'level_desc'
     }): Promise<Ad[]> => {
         const res = await api.get('/ads/search', { params })
-        return res.data
+        return res.data ?? []
     },
 
     create: async (data: AdInput): Promise<Ad> => {
@@ -41,7 +41,7 @@ export const adsApi = {
     // Applications
     listApplications: async (adId: string): Promise<Application[]> => {
         const res = await api.get(`/ads/${adId}/applications`)
-        return res.data
+        return res.data ?? []
     },
 
     apply: async (adId: string): Promise<void> => {

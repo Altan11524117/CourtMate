@@ -37,11 +37,12 @@ const AdDetail: React.FC = () => {
         enabled: !!adId,
     })
 
-    const { data: applications = [] } = useQuery({
+    const { data: applicationsRaw } = useQuery({
         queryKey: ['applications', adId],
         queryFn: () => adsApi.listApplications(adId!),
         enabled: !!adId && !!user && ad?.ownerId === user?.id,
     })
+    const applications = applicationsRaw ?? []
 
     const applyMutation = useMutation({
         mutationFn: () => adsApi.apply(adId!),

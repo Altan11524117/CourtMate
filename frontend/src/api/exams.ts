@@ -4,7 +4,7 @@ import type { ExamQuestion, ExamResult } from '@/types'
 export const examsApi = {
     getQuestions: async (): Promise<ExamQuestion[]> => {
         const res = await api.get('/exams/placement/questions')
-        return res.data
+        return res.data ?? []
     },
 
     submitExam: async (answers: {

@@ -17,11 +17,12 @@ const ExamPage: React.FC = () => {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
 
-    const { data: questions = [], isPending, isFetching, isError, error: queryError } = useQuery({
+    const { data: questionsRaw, isPending, isFetching, isError, error: queryError } = useQuery({
         queryKey: ['exam-questions'],
         queryFn: examsApi.getQuestions,
         enabled: started,
     })
+    const questions = questionsRaw ?? []
 
     const examLoading = started && (isPending || isFetching) && questions.length === 0
 

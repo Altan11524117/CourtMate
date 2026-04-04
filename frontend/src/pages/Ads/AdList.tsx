@@ -21,13 +21,14 @@ const AdList: React.FC = () => {
     const [sort, setSort] = useState<'newest' | 'oldest' | 'level_asc' | 'level_desc'>('newest')
     const [searching, setSearching] = useState(false)
 
-    const { data: ads = [], isLoading, refetch } = useQuery({
+    const { data: adsRaw, isLoading, refetch } = useQuery({
         queryKey: ['ads', location, category, sort, searching],
         queryFn: () =>
             searching || location || category
                 ? adsApi.search({ category: category || undefined, location: location || undefined, sort })
                 : adsApi.list({ limit: 20 }),
     })
+    const ads = adsRaw ?? []
 
     const handleSearch = () => { setSearching(true); refetch() }
     const handleClear = () => { setLocation(''); setCategory(''); setSort('newest'); setSearching(false) }

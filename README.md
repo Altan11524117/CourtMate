@@ -1,6 +1,6 @@
 # CourtMate
 
-![CourtMate Afişi](./Court Mate Afiş.png)
+![CourtMate Afişi](<./Court Mate Afiş.png>)
 
 ## Proje Hakkında
 

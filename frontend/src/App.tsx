@@ -48,13 +48,13 @@ export default function App() {
           <Route path="/faq" element={<FAQPage />} />
 
           {/* Protected */}
-          <Route path="/ads" element={<PublicOnly><AdList /></PublicOnly>} />
-          <Route path="/ads/create" element={<PublicOnly><AdForm /></PublicOnly>} />
-          <Route path="/ads/:adId" element={<PublicOnly><AdDetail /></PublicOnly>} />
-          <Route path="/ads/:adId/edit" element={<PublicOnly><AdForm /></PublicOnly>} />
-          <Route path="/exam" element={<PublicOnly><ExamPage /></PublicOnly>} />
-          <Route path="/exam/result" element={<PublicOnly><ExamResultPage /></PublicOnly>} />
-          <Route path="/profile/:userId" element={<PublicOnly><ProfilePage /></PublicOnly>} />
+          <Route path="/ads" element={<Protected><AdList /></Protected>} />
+          <Route path="/ads/create" element={<Protected><AdForm /></Protected>} />
+          <Route path="/ads/:adId" element={<Protected><AdDetail /></Protected>} />
+          <Route path="/ads/:adId/edit" element={<Protected><AdForm /></Protected>} />
+          <Route path="/exam" element={<Protected><ExamPage /></Protected>} />
+          <Route path="/exam/result" element={<Protected><ExamResultPage /></Protected>} />
+          <Route path="/profile/:userId" element={<Protected><ProfilePage /></Protected>} />
 
           {/* Fallbacks */}
           <Route path="/" element={<Navigate to="/ads" replace />} />

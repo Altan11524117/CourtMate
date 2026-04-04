@@ -5,7 +5,11 @@
 **Sınav Sonucunu Gönderme** (Altan AYDIN)
 * **API Metodu:** `POST /exams/placement/submit`
 * **Açıklama:** Sınav yanıtlarını gönderir ve seviyeyi belirler. Cevaplar analiz edilir, başarı puanı hesaplanır ve kullanıcının veritabanındaki "Seviye" bilgisi belli bir sureligine kalıcı olarak güncellenir. 
-<video src="./requirement_live_terminal_videos/sinav.mp4?raw=true" controls="controls" width="100%"></video>
+
+
+https://github.com/user-attachments/assets/17b99dad-9438-4454-9e2a-2b9eae40aad3
+
+
 ---
 
 **İlan Arama ve Filtreleme** (Altan AYDIN)

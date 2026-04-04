@@ -4,7 +4,8 @@ import type { ExamQuestion, ExamResult } from '@/types'
 export const examsApi = {
     getQuestions: async (): Promise<ExamQuestion[]> => {
         const res = await api.get('/exams/placement/questions')
-        return res.data ?? []
+        const data = res.data?.payload !== undefined ? res.data.payload : res.data
+        return Array.isArray(data) ? data : []
     },
 
     submitExam: async (answers: {
@@ -12,7 +13,7 @@ export const examsApi = {
         optionId: string
     }[]): Promise<ExamResult> => {
         const res = await api.post('/exams/placement/submit', { answers })
-        return res.data
+        return res.data?.payload !== undefined ? res.data.payload : res.data
     },
 
     analyzeExam: async (answers: {
@@ -21,6 +22,6 @@ export const examsApi = {
         isCorrect: boolean
     }[]): Promise<{ analysis: string }> => {
         const res = await api.post('/exams/analyze', { answers })
-        return res.data
+        return res.data?.payload !== undefined ? res.data.payload : res.data
     },
 }

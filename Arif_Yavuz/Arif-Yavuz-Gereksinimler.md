@@ -3,7 +3,7 @@
 * **Açıklama:** Sisteme yeni kullanıcı kaydı oluşturur. İstemciden zorunlu verileri alır ve şifreyi güvenlik standartlarına (örn: bcrypt) uygun şekilde hashleyerek veritabanına kaydeder.
 
 <video width="100%" controls>
-  <source src="./Arif_Yavuz/kayit.mp4" type="video/mp4">
+  <source src="./Arif_Yavuz/requirements_terminal_videos/kayit.mp4" type="video/mp4">
 </video>
 
 **Giriş Yapma** (Arif YAVUZ)

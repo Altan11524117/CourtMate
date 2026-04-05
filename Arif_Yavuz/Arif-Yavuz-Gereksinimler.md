@@ -8,7 +8,7 @@
 * **API Metodu:** `POST /auth/login`
 * **Açıklama:** Kullanıcı girişini ve kimlik doğrulamasını sağlar. Doğrulama başarılı olursa, sonraki güvenli iletişimler için istemciye bir erişim token'ı döndürür.
 
-<video src="requirements_terminal_videos/giris.mp4" controls width="100%"></video>
+<video src="/Arif_Yavuz/requirements_terminal_videos/giris.mp4" controls width="100%"></video>
 
 **Çıkış Yapma** (Arif YAVUZ)
 * **API Metodu:** `POST /auth/logout`

@@ -2,8 +2,8 @@
 * **API Metodu:** `POST /auth/register`
 * **Açıklama:** Sisteme yeni kullanıcı kaydı oluşturur. İstemciden zorunlu verileri alır ve şifreyi güvenlik standartlarına (örn: bcrypt) uygun şekilde hashleyerek veritabanına kaydeder.
 
-<video width="100%" controls>
-  <source src="./requirements_terminal/kayit.mp4" type="video/mp4">
+<video width="600" controls>
+  <source src="https://github.com/Altan11524117/CourtMate/raw/main/Arif_Yavuz/requirements_terminal_videos/kayit.mp4" type="video/mp4">
 </video>
 
 **Giriş Yapma** (Arif YAVUZ)

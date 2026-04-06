@@ -1,6 +1,6 @@
 # Altan AYDIN'ın REST API Metotları
 
-**API Test Videosu:** [Link buraya eklenecek](https://youtu.be/d_8DGgg--as)
+**API Test Videosu:** [TEST VIDEOSU](https://youtu.be/d_8DGgg--as)
 
 ## 1. Sınav Sorularını Getirme
 - **Endpoint:** `GET /exams/placement/questions`

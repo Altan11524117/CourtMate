@@ -1,6 +1,6 @@
-# Arif Yılmaz'ın REST API Metotları
+# Arif Yavuz'un REST API Metotları
 
-**API Test Videosu:** [Link buraya eklenecek]([https://example.com](https://youtu.be/T_uBIQqDlUY))
+**API Test Videosu:** [Link buraya eklenecek]([https://youtu.be/T_uBIQqDlUY])
 
 ## 1. Üye Olma
 - **Endpoint:** `POST /auth/register`

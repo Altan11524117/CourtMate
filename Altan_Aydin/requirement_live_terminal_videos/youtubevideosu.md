@@ -1,0 +1,1 @@
+[ALTAN AYDIN FRONT END VE BACKEND GEREKSINIMLERI](https://youtu.be/d_8DGgg--as)

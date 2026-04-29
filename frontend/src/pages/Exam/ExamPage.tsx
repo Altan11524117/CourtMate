@@ -17,19 +17,31 @@ const ExamPage: React.FC = () => {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
 
+<<<<<<< Updated upstream
     const { data: questionsRaw, isPending, isFetching, isError, error: queryError } = useQuery({
         queryKey: ['exam-questions', user?.level],
         queryFn: () => examsApi.getQuestions(user?.level),
+=======
+    const { data: questionsRaw, isLoading } = useQuery({
+        queryKey: ['exam-questions'],
+        queryFn: examsApi.getQuestions,
+>>>>>>> Stashed changes
         enabled: started,
     })
     const questions = questionsRaw ?? []
 
     const examLoading = started && (isPending || isFetching) && questions.length === 0
 
-    const currentQ: ExamQuestion | undefined = questions[current]
-    const progress = questions.length > 0 ? (current / questions.length) * 100 : 0
+    const questions: ExamQuestion[] = (questionsRaw ?? []).map(q => ({
+        ...q,
+        options: q.options ?? [],
+    }))
+    const currentQ: ExamQuestion | undefined = questions.length > 0 ? questions[current] : undefined
+
+    // GÜVENLİ HALE GETİRİLDİ: questions.length kontrolü
+    const progress = (questions && questions.length > 0) ? (current / questions.length) * 100 : 0
     const isAnswered = currentQ ? !!answers[currentQ.id] : false
-    const isLast = current === questions.length - 1
+    const isLast = (questions && questions.length > 0) ? current === questions.length - 1 : false
     const answered = Object.keys(answers).length
 
     const handleAnswer = (qId: string, optId: string) =>
@@ -300,7 +312,11 @@ const ExamPage: React.FC = () => {
                                             color: selected ? 'white' : 'rgba(255,255,255,0.35)',
                                             border: `1px solid ${selected ? '#40916c' : 'rgba(255,255,255,0.1)'}`,
                                         }}>
+<<<<<<< Updated upstream
                                             {letters[idx] ?? String.fromCharCode(65 + idx)}
+=======
+                                            {letters[idx] ?? ''}
+>>>>>>> Stashed changes
                                         </span>
                                         <span style={{
                                             fontSize: '14px', lineHeight: 1.45,

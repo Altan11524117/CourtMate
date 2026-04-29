@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { authApi } from '@/api/auth'
 import { usersApi } from '@/api/users'
 import { useAuthStore } from '@/store/authStore'
@@ -10,33 +8,47 @@ import { getErrorMessage } from '@/utils'
 import { InteractiveCourtGrid } from '@/components/InteractiveCourtGrid'
 import { AuthPageLayout } from '@/components/AuthPageLayout'
 
-const schema = z.object({
-    email: z.string().email('Please enter a valid email'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-type FormData = z.infer<typeof schema>
+/** No Zod on this page — SES/wallet lockdown can break Zod v4 internals (`payload`). */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+type LoginFormData = {
+    email: string
+    password: string
+}
 
 const Login: React.FC = () => {
     const navigate = useNavigate()
     const { setToken, setUser } = useAuthStore()
-    const [error, setError] = useState('')
+    const [bannerError, setBannerError] = useState('')
     const [showPass, setShowPass] = useState(false)
 
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
-        resolver: zodResolver(schema),
+    const { register, handleSubmit, setError: setFieldError, formState: { errors, isSubmitting } } = useForm<LoginFormData>({
+        defaultValues: { email: '', password: '' },
     })
 
-    const onSubmit = async (data: FormData) => {
-        setError('')
+
+    const onSubmit = async (data: LoginFormData) => {
+        const email = (data.email ?? '').trim()
+        const password = data.password ?? ''
+        if (!EMAIL_RE.test(email)) {
+            setFieldError('email', { message: 'Please enter a valid email' })
+            return
+        }
+        if (password.length < 6) {
+            setFieldError('password', { message: 'Password must be at least 6 characters' })
+            return
+        }
+        const valid: LoginFormData = { email, password }
+        setBannerError('')
         try {
-            const res = await authApi.login(data)
+            const res = await authApi.login(valid)
             setToken(res.token)
             const me = await usersApi.getMe()
             const profile = await usersApi.getProfile(me.userID)
             setUser(profile)
             navigate('/ads')
         } catch (err) {
-            setError(getErrorMessage(err))
+            setBannerError(getErrorMessage(err))
         }
     }
 
@@ -207,13 +219,13 @@ const Login: React.FC = () => {
                             {errors.password && <p style={{ fontSize: '12px', color: '#f87171', margin: 0 }}>{errors.password.message}</p>}
                         </div>
 
-                        {error && (
+                        {bannerError && (
                             <div style={{
                                 padding: '12px 16px', borderRadius: '12px',
                                 backgroundColor: 'rgba(248,113,113,0.1)',
                                 border: '1px solid rgba(248,113,113,0.3)',
                                 color: '#fca5a5', fontSize: '13px', lineHeight: 1.45,
-                            }}>{error}</div>
+                            }}>{bannerError}</div>
                         )}
 
                         <button type="submit" disabled={isSubmitting} className="auth-submit-button" style={{

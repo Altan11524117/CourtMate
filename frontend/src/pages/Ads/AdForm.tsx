@@ -46,7 +46,7 @@ const AdForm: React.FC = () => {
     })
 
     const { register, handleSubmit, reset, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema, { jitless: true }),
     })
 
     const watchCategory = watch('category')

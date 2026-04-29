@@ -41,8 +41,8 @@ const ResetPassword: React.FC = () => {
     const [error, setError] = useState('')
     const [showPass, setShowPass] = useState(false)
 
-    const requestForm = useForm<RequestData>({ resolver: zodResolver(requestSchema) })
-    const confirmForm = useForm<ConfirmData>({ resolver: zodResolver(confirmSchema) })
+    const requestForm = useForm<RequestData>({ resolver: zodResolver(requestSchema, { jitless: true }) })
+    const confirmForm = useForm<ConfirmData>({ resolver: zodResolver(confirmSchema, { jitless: true }) })
 
     const onRequest = async (data: RequestData) => {
         setError('')

@@ -143,11 +143,13 @@ export const Navbar: React.FC = () => {
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                                 }}>
                                     <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>
-                                        {user?.fullName?.charAt(0).toUpperCase()}
+                                        {/* BURASI DÜZELTİLDİ: ?. ve || '?' eklendi */}
+                                        {user?.fullName?.charAt(0)?.toUpperCase() || '?'}
                                     </span>
                                 </div>
                                 <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.85)' }}>
-                                    {user?.fullName?.split(' ')[0]}
+                                    {/* BURASI DÜZELTİLDİ: null gelirse split patlamasın diye kontrol eklendi */}
+                                    {user?.fullName ? user.fullName.split(' ')[0] : 'User'}
                                 </span>
                                 {user?.level && (
                                     <span style={{
@@ -298,7 +300,8 @@ export const Navbar: React.FC = () => {
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                                     }}>
                                         <span style={{ color: 'white', fontSize: '13px', fontWeight: 700 }}>
-                                            {user?.fullName?.charAt(0).toUpperCase()}
+                                            {/* BURASI DÜZELTİLDİ: ?. ve || '?' eklendi */}
+                                            {user?.fullName?.charAt(0)?.toUpperCase() || '?'}
                                         </span>
                                     </div>
                                     <div style={{ flex: 1, textAlign: 'left' }}>

@@ -6,10 +6,13 @@
 * **API Metodu:** `POST /exams/placement/submit`
 * **Açıklama:** Sınav yanıtlarını gönderir ve seviyeyi belirler. Cevaplar analiz edilir, başarı puanı hesaplanır ve kullanıcının veritabanındaki "Seviye" bilgisi belli bir sureligine kalıcı olarak güncellenir. 
 
+<<<<<<< HEAD
+=======
 
 https://github.com/user-attachments/assets/17b99dad-9438-4454-9e2a-2b9eae40aad3
 
 
+>>>>>>> 812f2afa99d2bd602a5aeb4b6f67a0eaa541b4fb
 ---
 
 **İlan Arama ve Filtreleme** (Altan AYDIN)
@@ -70,6 +73,9 @@ https://github.com/user-attachments/assets/85c30762-be6a-4a9d-bb66-0524061244a0
 
 **Başvuru Onaylama/Reddetme** (Altan AYDIN)
 * **API Metodu:** `PATCH /ads/{adId}/applications/{applicationId}`
+<<<<<<< HEAD
+* **Açıklama:** Gelen başvuruyu ona
+=======
 * **Açıklama:** Gelen başvuruyu ona
 
 
@@ -80,3 +86,4 @@ https://github.com/user-attachments/assets/83ab3541-5cb3-47bd-8083-9646e7232921
 
 
 
+>>>>>>> 812f2afa99d2bd602a5aeb4b6f67a0eaa541b4fb

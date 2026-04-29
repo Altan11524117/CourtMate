@@ -44,6 +44,8 @@ const AdDetail: React.FC = () => {
     })
     const applications = applicationsRaw ?? []
 
+    const applications = applicationsRaw ?? []
+
     const applyMutation = useMutation({
         mutationFn: () => adsApi.apply(adId!),
         onSuccess: () => setApplySuccess(true),
@@ -130,7 +132,7 @@ const AdDetail: React.FC = () => {
                                             borderRadius: '99px', fontFamily: 'var(--font-body)',
                                             ...statusStyle(ad.status),
                                         }}>
-                                            {ad.status === 'open' ? 'Open' : ad.status === 'filled' ? 'Filled' : 'Cancelled'}
+                                            {ad.status === 'open' ? 'Open' : ad.status === 'filled' ? 'Filled' : ad.status === 'cancelled' ? 'Cancelled' : ad.status ?? 'Unknown'}
                                         </span>
                                         {ad.category && (
                                             <span style={{
@@ -158,7 +160,7 @@ const AdDetail: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    {ad.viewCount} views
+                                    {ad.viewCount ?? 0} views
                                 </div>
                             </div>
 
@@ -167,11 +169,11 @@ const AdDetail: React.FC = () => {
                                 {[
                                     {
                                         icon: <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>,
-                                        label: 'Location', value: ad.location,
+                                        label: 'Location', value: ad.location ?? 'Not specified',
                                     },
                                     {
                                         icon: <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5" /></svg>,
-                                        label: 'Match Date', value: formatDate(ad.matchDate),
+                                        label: 'Match Date', value: ad.matchDate ? formatDate(ad.matchDate) : 'Not set',
                                     },
                                 ].map(item => (
                                     <div key={item.label} style={{
@@ -214,8 +216,9 @@ const AdDetail: React.FC = () => {
                                     background: 'linear-gradient(135deg, #40916c, #c9a96e)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 }}>
+                                    {/* DEĞİŞİKLİK BURADA: charAt(0) null gelirse diye '?' eklendi */}
                                     <span style={{ color: 'white', fontSize: '16px', fontWeight: 700 }}>
-                                        {ad.ownerProfileSummary?.fullName?.charAt(0).toUpperCase()}
+                                        {ad.ownerProfileSummary?.fullName?.charAt(0)?.toUpperCase() || '?'}
                                     </span>
                                 </div>
                                 <div style={{ flex: 1 }}>
@@ -350,8 +353,9 @@ const AdDetail: React.FC = () => {
                                                 background: 'linear-gradient(135deg, #40916c, #c9a96e)',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             }}>
+
                                                 <span style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>
-                                                    {app.applicantName?.charAt(0).toUpperCase()}
+                                                    {app.applicantName?.charAt(0)?.toUpperCase() || '?'}
                                                 </span>
                                             </div>
 
@@ -407,9 +411,14 @@ const AdDetail: React.FC = () => {
                                                         : { backgroundColor: 'rgba(248,113,113,0.12)', color: '#fca5a5', border: '1px solid rgba(248,113,113,0.2)' }
                                                     ),
                                                 }}>
+<<<<<<< Updated upstream
                                                     {app.status
                                                         ? app.status.charAt(0).toUpperCase() + app.status.slice(1)
                                                         : '—'}
+=======
+
+                                                    {app.status ? app.status.charAt(0).toUpperCase() + app.status.slice(1) : 'Unknown'}
+>>>>>>> Stashed changes
                                                 </span>
                                             )}
                                         </div>

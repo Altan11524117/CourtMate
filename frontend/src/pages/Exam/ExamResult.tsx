@@ -46,9 +46,14 @@ const ExamResultPage: React.FC = () => {
         setAnalyzing(true)
         try {
             const { questions, answers } = state
+<<<<<<< Updated upstream
             const list = questions ?? []
             const payload = list.map(q => ({
                 questionText: q.text ?? '',
+=======
+            const payload = questions.map(q => ({
+                questionText: q.text,
+>>>>>>> Stashed changes
                 selectedText: (q.options ?? []).find(o => o.id === answers[q.id])?.text ?? '',
                 isCorrect: false,
             }))

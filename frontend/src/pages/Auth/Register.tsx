@@ -32,7 +32,7 @@ const Register: React.FC = () => {
     const [showPass, setShowPass] = useState(false)
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema, { jitless: true }),
     })
 
     const onSubmit = async (data: FormData) => {

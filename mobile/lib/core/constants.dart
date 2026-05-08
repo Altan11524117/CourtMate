@@ -3,9 +3,8 @@
 abstract final class AppConstants {
   // ── API ───────────────────────────────────────────────────────
   /// Switch between local and production via env config — never hardcode prod URL.
-  static const apiBaseUrl =
-      'http://[IP_ADDRESS]/v1'; // PC's WiFi IP — phone must be on same network
-  static const apiBaseUrlIos = 'http://[IP_ADDRESS]/v1';
+  static const apiBaseUrl = 'https://courtmate-sncr.onrender.com/v1'; // Production Render API URL
+  static const apiBaseUrlIos = 'https://courtmate-sncr.onrender.com/v1';
   static const apiTimeout = Duration(seconds: 15);
   static const apiConnectTimeout = Duration(seconds: 10);
 

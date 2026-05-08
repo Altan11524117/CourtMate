@@ -42,7 +42,7 @@ final class ApiClient {
 
     // Auth interceptor runs before every request — injects JWT if present.
     // Placed BEFORE logger so logs show the Authorization header.
-    _dio.interceptors.add(_AuthInterceptor(_storage, _dio));
+    _dio.interceptors.add(_AuthInterceptor(_storage));
 
     // Pretty logger: required for homework — visually shows request → response
     // Only active in debug/profile builds to avoid leaking tokens in production.
@@ -98,10 +98,9 @@ final class ApiClient {
 /// guard can redirect to login. Does NOT attempt token refresh — backend
 /// issues 72h tokens, refresh is out of scope.
 final class _AuthInterceptor extends Interceptor {
-  const _AuthInterceptor(this._storage, this._dio);
+  const _AuthInterceptor(this._storage);
 
   final FlutterSecureStorage _storage;
-  final Dio _dio;
 
   @override
   Future<void> onRequest(

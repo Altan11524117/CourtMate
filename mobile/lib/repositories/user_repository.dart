@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_model.dart';
 import '../services/api_client.dart';
-import '../core/error_handler.dart';
 
 final userRepositoryProvider = Provider<UserRepository>(
   (ref) => UserRepository(ref.read(apiClientProvider)),

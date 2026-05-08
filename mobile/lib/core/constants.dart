@@ -3,17 +3,18 @@
 abstract final class AppConstants {
   // ── API ───────────────────────────────────────────────────────
   /// Switch between local and production via env config — never hardcode prod URL.
-  static const apiBaseUrl = 'http://10.0.2.2:8000/v1'; // Android emulator localhost
-  static const apiBaseUrlIos = 'http://localhost:8000/v1';
+  static const apiBaseUrl =
+      'http://[IP_ADDRESS]/v1'; // PC's WiFi IP — phone must be on same network
+  static const apiBaseUrlIos = 'http://[IP_ADDRESS]/v1';
   static const apiTimeout = Duration(seconds: 15);
   static const apiConnectTimeout = Duration(seconds: 10);
 
   // ── Secure Storage Keys ───────────────────────────────────────
   static const keyAuthToken = 'auth_token';
-  static const keyUserId    = 'user_id';
+  static const keyUserId = 'user_id';
 
   // ── Pagination ────────────────────────────────────────────────
-  static const defaultPageLimit  = 10;
+  static const defaultPageLimit = 10;
   static const defaultPageOffset = 0;
 
   // ── Exam ──────────────────────────────────────────────────────
@@ -24,18 +25,18 @@ abstract final class AppConstants {
 
   // ── Sort options ──────────────────────────────────────────────
   static const sortOptions = {
-    'newest':     'Newest First',
-    'oldest':     'Oldest First',
-    'level_asc':  'Level ↑',
+    'newest': 'Newest First',
+    'oldest': 'Oldest First',
+    'level_asc': 'Level ↑',
     'level_desc': 'Level ↓',
   };
 
   // ── ITN Level display map ─────────────────────────────────────
   static const levelLabels = {
-    'Beginner (ITN 10)':           'Beginner',
-    'Intermediate (ITN 7)':        'Intermediate',
-    'Upper-Intermediate (ITN 5)':  'Upper-Inter',
-    'Advanced (ITN 3)':            'Advanced',
+    'Beginner (ITN 10)': 'Beginner',
+    'Intermediate (ITN 7)': 'Intermediate',
+    'Upper-Intermediate (ITN 5)': 'Upper-Inter',
+    'Advanced (ITN 3)': 'Advanced',
   };
 
   // ── Date format ───────────────────────────────────────────────

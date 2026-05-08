@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../models/user_model.dart';
 import '../services/api_client.dart';
 import '../core/constants.dart';
-import '../core/error_handler.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(ref.read(apiClientProvider)),

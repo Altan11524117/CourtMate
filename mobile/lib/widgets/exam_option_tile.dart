@@ -221,7 +221,7 @@ class CategoryChip extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withOpacity(0.15)
+              ? AppColors.primary.withValues(alpha: 0.15)
               : AppColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(

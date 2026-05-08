@@ -292,7 +292,7 @@ final class AppTheme {
         // ── Bottom Navigation ─────────────────────────────────────
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surface,
-          indicatorColor: AppColors.primary.withOpacity(0.2),
+          indicatorColor: AppColors.primary.withValues(alpha: 0.2),
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const IconThemeData(color: AppColors.primary);

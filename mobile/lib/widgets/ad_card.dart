@@ -42,7 +42,7 @@ class AdCard extends StatelessWidget {
                 if (ad.requiredLevel != null)
                   LevelBadge(level: ad.requiredLevel, small: true),
                 const Spacer(),
-                Icon(
+                const Icon(
                   Icons.remove_red_eye_outlined,
                   size: 12,
                   color: AppColors.textMuted,
@@ -104,7 +104,7 @@ class _CategoryTag extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: _color.withOpacity(0.12),
+          color: _color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(

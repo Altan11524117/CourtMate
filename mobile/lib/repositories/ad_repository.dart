@@ -4,7 +4,6 @@ import '../models/ad_model.dart';
 import '../models/application_model.dart';
 import '../services/api_client.dart';
 import '../core/constants.dart';
-import '../core/error_handler.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AD REPOSITORY

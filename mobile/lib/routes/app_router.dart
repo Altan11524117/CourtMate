@@ -28,6 +28,7 @@ abstract final class AppRoutes {
   static const listings        = '/';
   static const adDetail        = '/ads/:adId';
   static const postAd          = '/ads/new';
+  static const editAd          = '/ads/:adId/edit';
   static const examIntro       = '/exam';
   static const examQuestion    = '/exam/questions';
   static const examResult      = '/exam/result';
@@ -100,6 +101,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.postAd,
         name: 'postAd',
         builder: (_, __) => const PostAdScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.editAd,
+        name: 'editAd',
+        builder: (context, state) {
+          final adId = state.pathParameters['adId']!;
+          return PostAdScreen(editAdId: adId);
+        },
       ),
       GoRoute(
         path: AppRoutes.adDetail,

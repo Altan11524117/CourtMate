@@ -4,10 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants.dart';
 import '../../core/theme.dart';
+import '../../models/ad_model.dart';
 import '../../providers/ad_provider.dart';
+import '../../repositories/ad_repository.dart';
 
 class PostAdScreen extends ConsumerStatefulWidget {
-  const PostAdScreen({super.key});
+  const PostAdScreen({super.key, this.editAdId});
+
+  /// When set, screen loads this ad and submits as PATCH.
+  final String? editAdId;
 
   @override
   ConsumerState<PostAdScreen> createState() => _PostAdScreenState();
@@ -25,6 +30,53 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   TimeOfDay? _selectedTime;
 
   bool _isLoading = false;
+  bool _loadingDraft = false;
+  bool _draftScheduled = false;
+
+  bool get _isEditing => widget.editAdId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEditing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _draftScheduled) return;
+        _draftScheduled = true;
+        _loadExistingAd();
+      });
+    }
+  }
+
+  Future<void> _loadExistingAd() async {
+    final id = widget.editAdId;
+    if (id == null) return;
+
+    setState(() => _loadingDraft = true);
+    try {
+      final ad = await ref.read(adRepositoryProvider).getAdDetail(id);
+      if (!mounted) return;
+      _titleController.text = ad.title;
+      _locationController.text = ad.location;
+      _selectedCategory = ad.category;
+      _selectedLevel = ad.requiredLevel;
+      final local = ad.matchDate.toLocal();
+      _selectedDate = DateTime(local.year, local.month, local.day);
+      _selectedTime = TimeOfDay(hour: local.hour, minute: local.minute);
+      setState(() {});
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not load listing: $e'),
+            backgroundColor: AppColors.danger,
+          ),
+        );
+        context.pop();
+      }
+    } finally {
+      if (mounted) setState(() => _loadingDraft = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -34,10 +86,15 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final initial = _selectedDate ??
+        DateTime.now().add(const Duration(days: 1));
+    final firstDate =
+        _isEditing ? DateTime(now.year - 1, 1, 1) : DateTime(now.year, now.month, now.day);
     final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
+      initialDate: initial,
+      firstDate: firstDate,
       lastDate: DateTime.now().add(const Duration(days: 90)),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
@@ -55,7 +112,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   Future<void> _pickTime() async {
     final time = await showTimePicker(
       context: context,
-      initialTime: const TimeOfDay(hour: 18, minute: 0),
+      initialTime: _selectedTime ?? const TimeOfDay(hour: 18, minute: 0),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: const ColorScheme.dark(
@@ -88,20 +145,39 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
       _selectedTime!.minute,
     ).toUtc();
 
-    final newAd = await ref.read(postAdProvider.notifier).createAd(
-          title: _titleController.text.trim(),
-          location: _locationController.text.trim(),
-          matchDate: matchDate,
-          category: _selectedCategory,
-          requiredLevel: _selectedLevel,
-        );
+    final AdModel? result;
+    if (_isEditing) {
+      result = await ref.read(postAdProvider.notifier).updateAd(
+            widget.editAdId!,
+            title: _titleController.text.trim(),
+            location: _locationController.text.trim(),
+            matchDate: matchDate,
+            category: _selectedCategory,
+            requiredLevel: _selectedLevel,
+          );
+    } else {
+      result = await ref.read(postAdProvider.notifier).createAd(
+            title: _titleController.text.trim(),
+            location: _locationController.text.trim(),
+            matchDate: matchDate,
+            category: _selectedCategory,
+            requiredLevel: _selectedLevel,
+          );
+    }
 
     if (mounted) {
       setState(() => _isLoading = false);
-      if (newAd != null) {
+      if (result != null) {
+        ref.invalidate(adDetailProvider(widget.editAdId ?? result.id));
         ref.read(adListProvider.notifier).refresh();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('🎾 Listing posted successfully!')),
+          SnackBar(
+            content: Text(
+              _isEditing
+                  ? 'Listing updated successfully.'
+                  : 'Listing posted successfully.',
+            ),
+          ),
         );
         context.pop();
       } else {
@@ -120,18 +196,22 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Post a Listing'),
+        title: Text(_isEditing ? 'Edit Listing' : 'Post a Listing'),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () => context.pop(),
         ),
       ),
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
+        child: _loadingDraft && _isEditing
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              )
+            : Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: [
               Text('Match Details', style: AppTypography.headingMedium),
               const SizedBox(height: 8),
               Text(
@@ -170,6 +250,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
 
               // Category Dropdown
               DropdownButtonFormField<String>(
+                key: ValueKey('cat_${_selectedCategory ?? 'none'}'),
                 initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Match Category',
@@ -185,7 +266,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
               const SizedBox(height: 20),
 
               // Level Dropdown
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<String?>(
+                key: ValueKey('lvl_${_selectedLevel ?? 'any'}'),
                 initialValue: _selectedLevel,
                 decoration: const InputDecoration(
                   labelText: 'Required Level (Optional)',
@@ -298,7 +380,10 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )
-                      : Text('Post Listing', style: AppTypography.button),
+                      : Text(
+                          _isEditing ? 'Save Changes' : 'Post Listing',
+                          style: AppTypography.button,
+                        ),
                 ),
               ),
             ],

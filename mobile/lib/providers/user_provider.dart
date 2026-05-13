@@ -21,9 +21,9 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserModel>> {
   }
 
   Future<void> update({
-    String? fullName,
+    required String fullName,
     String? preferredHand,
-    String? bio,
+    required String bio,
   }) async {
     try {
       final updated = await _repo.updateProfile(

@@ -137,6 +137,29 @@ class PostAdNotifier extends StateNotifier<AsyncValue<AdModel?>> {
     return result.valueOrNull;
   }
 
+  Future<AdModel?> updateAd(
+    String adId, {
+    required String title,
+    required String location,
+    required DateTime matchDate,
+    String? category,
+    String? requiredLevel,
+  }) async {
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(
+      () => _repo.updateAd(
+        adId,
+        title:         title,
+        location:      location,
+        matchDate:     matchDate,
+        category:      category,
+        requiredLevel: requiredLevel,
+      ),
+    );
+    state = result;
+    return result.valueOrNull;
+  }
+
   void reset() => state = const AsyncData(null);
 }
 
@@ -166,12 +189,13 @@ class ApplicationsNotifier
     state = await AsyncValue.guard(() => _repo.listApplications(_adId));
   }
 
-  Future<bool> applyToAd() async {
+  /// Returns `null` on success, otherwise a user-facing error message.
+  Future<String?> applyToAd() async {
     try {
       await _repo.applyToAd(_adId);
-      return true;
-    } catch (_) {
-      return false;
+      return null;
+    } catch (e) {
+      return e is String ? e : e.toString();
     }
   }
 
@@ -181,7 +205,16 @@ class ApplicationsNotifier
           await _repo.updateStatus(_adId, applicationId, status);
       state.whenData((apps) {
         state = AsyncData(
-          apps.map((a) => a.id == applicationId ? updated : a).toList(),
+          apps.map((a) {
+            if (a.id != applicationId) return a;
+            return a.copyWith(
+              status: updated.status,
+              applicantName:
+                  updated.applicantName ?? a.applicantName,
+              applicantLevel:
+                  updated.applicantLevel ?? a.applicantLevel,
+            );
+          }).toList(),
         );
       });
     } catch (_) {}

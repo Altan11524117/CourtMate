@@ -24,17 +24,17 @@ final class UserRepository {
 
   Future<UserModel> updateProfile(
     String userId, {
-    String? fullName,
+    required String fullName,
     String? preferredHand,
-    String? bio,
+    required String bio,
   }) async {
     try {
       final res = await _client.patch<Map<String, dynamic>>(
         '/users/$userId/profile',
         data: {
-          if (fullName      != null) 'fullName':      fullName,
-          if (preferredHand != null) 'preferredHand': preferredHand,
-          if (bio           != null) 'bio':            bio,
+          'fullName':      fullName,
+          'preferredHand': preferredHand ?? '',
+          'bio':           bio,
         },
       );
       return UserModel.fromJson(res.data!);

@@ -122,6 +122,8 @@ func GetAdDetail(c *gin.Context) {
 		"matchDate":     ad.MatchDate,
 		"status":        ad.Status,
 		"viewCount":     ad.ViewCount + 1,
+		"createdAt":     ad.CreatedAt,
+		"updatedAt":     ad.UpdatedAt,
 		"ownerProfileSummary": gin.H{
 			"fullName": ad.Owner.FullName,
 			"level":    ad.Owner.Level,

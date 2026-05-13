@@ -39,10 +39,18 @@ class _ListingsScreenState extends ConsumerState<ListingsScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final adState = ref.watch(adListProvider);
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+      backgroundColor: AppColors.background,
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () => ref.read(adListProvider.notifier).refresh(),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          slivers: [
           // ── Hero Header ────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Container(
@@ -53,7 +61,7 @@ class _ListingsScreenState extends ConsumerState<ListingsScreen> {
                   colors: [Color(0xFF0F2318), Color(0xFF071610)],
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(24, 64, 24, 32),
+              padding: EdgeInsets.fromLTRB(24, topInset + 16, 24, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -169,12 +177,16 @@ class _ListingsScreenState extends ConsumerState<ListingsScreen> {
                       itemCount: ads.length,
                       itemBuilder: (ctx, i) => AdCard(
                         ad: ads[i],
-                        onTap: () => context.push('/ads/${ads[i].id}'),
+                        onTap: () => context.pushNamed(
+                          'adDetail',
+                          pathParameters: {'adId': ads[i].id},
+                        ),
                       ),
                     ),
                   ),
           ),
         ],
+        ),
       ),
 
       // ── FAB ─────────────────────────────────────────────────────────

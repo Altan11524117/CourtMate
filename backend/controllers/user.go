@@ -39,6 +39,7 @@ func GetUserProfile(c *gin.Context) {
 			"level":         user.Level,
 			"preferredHand": user.PreferredHand,
 			"bio":           user.Bio,
+			"createdAt":     user.CreatedAt,
 		})
 	}
 }

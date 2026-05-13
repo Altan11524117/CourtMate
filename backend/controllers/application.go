@@ -77,6 +77,7 @@ func ListApplications(c *gin.Context) {
 	for _, app := range applications {
 		result = append(result, gin.H{
 			"id":             app.ID,
+			"adId":           app.AdID,
 			"applicantId":    app.ApplicantID,
 			"applicantName":  app.Applicant.FullName,
 			"applicantLevel": app.Applicant.Level,

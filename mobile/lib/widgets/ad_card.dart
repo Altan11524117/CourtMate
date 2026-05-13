@@ -19,17 +19,20 @@ class AdCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateStr = DateFormat(AppConstants.matchDateFormat).format(ad.matchDate.toLocal());
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.surfaceBorder),
-        ),
-        child: Column(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.surfaceBorder),
+          ),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Header row ──────────────────────────────────
@@ -84,6 +87,7 @@ class AdCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

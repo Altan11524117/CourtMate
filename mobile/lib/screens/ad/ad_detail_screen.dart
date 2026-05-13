@@ -8,6 +8,11 @@ import '../../providers/auth_provider.dart';
 import '../../providers/ad_provider.dart';
 import '../../widgets/level_badge.dart';
 
+bool _sameUser(String? a, String b) {
+  if (a == null || a.isEmpty) return false;
+  return a.toLowerCase().trim() == b.toLowerCase().trim();
+}
+
 class AdDetailScreen extends ConsumerWidget {
   const AdDetailScreen({super.key, required this.adId});
   final String adId;
@@ -18,6 +23,7 @@ class AdDetailScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: adState.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary),
@@ -36,7 +42,7 @@ class AdDetailScreen extends ConsumerWidget {
           ),
         ),
         data: (ad) {
-          final isOwner   = authState.userId == ad.ownerId;
+          final isOwner = _sameUser(authState.userId, ad.ownerId);
           final dateStr   = DateFormat(AppConstants.matchDateFormat)
               .format(ad.matchDate.toLocal());
 
@@ -52,12 +58,21 @@ class AdDetailScreen extends ConsumerWidget {
                   onPressed: () => context.pop(),
                 ),
                 actions: [
-                  if (isOwner)
+                  if (isOwner) ...[
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      tooltip: 'Edit listing',
+                      onPressed: () => context.pushNamed(
+                        'editAd',
+                        pathParameters: {'adId': adId},
+                      ),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline_rounded,
                           color: AppColors.danger),
                       onPressed: () => _confirmDelete(context, ref),
                     ),
+                  ],
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
@@ -113,6 +128,36 @@ class AdDetailScreen extends ConsumerWidget {
                     _InfoGrid(dateStr: dateStr, location: ad.location),
                     const SizedBox(height: 24),
 
+                    if (!ad.isOpen) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppColors.warning.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: AppColors.warning.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded,
+                                color: AppColors.warning, size: 22),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                isOwner
+                                    ? 'This listing is closed. Applicants can no longer apply.'
+                                    : 'This listing is closed.',
+                                style: AppTypography.bodyMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
                     // ── Owner card ──────────────────────────────
                     if (ad.ownerSummary != null) ...[
                       Text('Posted by', style: AppTypography.overline),
@@ -121,7 +166,10 @@ class AdDetailScreen extends ConsumerWidget {
                         name:    ad.ownerSummary!.fullName,
                         level:   ad.ownerSummary!.level,
                         ownerId: ad.ownerId,
-                        onTap:   () => context.push('/profile/${ad.ownerId}'),
+                        onTap:   () => context.pushNamed(
+                          'profile',
+                          pathParameters: {'userId': ad.ownerId},
+                        ),
                       ),
                       const SizedBox(height: 24),
                     ],
@@ -132,8 +180,10 @@ class AdDetailScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       _ApplicationsPreview(
                         adId: adId,
-                        onViewAll: () =>
-                            context.push('/ads/$adId/applications'),
+                        onViewAll: () => context.pushNamed(
+                          'applications',
+                          pathParameters: {'adId': adId},
+                        ),
                       ),
                     ],
                   ]),
@@ -147,8 +197,20 @@ class AdDetailScreen extends ConsumerWidget {
       // ── Bottom CTA ───────────────────────────────────────────────
       bottomNavigationBar: adState.whenOrNull(
         data: (ad) {
-          final isOwner = authState.userId == ad.ownerId;
-          if (isOwner) return null;
+          final isOwner = _sameUser(authState.userId, ad.ownerId);
+          if (isOwner) {
+            return _OwnerListingActions(
+              onEdit: () => context.pushNamed(
+                'editAd',
+                pathParameters: {'adId': adId},
+              ),
+              onApplications: () => context.pushNamed(
+                'applications',
+                pathParameters: {'adId': adId},
+              ),
+            );
+          }
+          if (!ad.isOpen) return null;
           return _ApplyBar(adId: adId);
         },
       ),
@@ -458,6 +520,67 @@ class _StatusBadge extends StatelessWidget {
       );
 }
 
+class _OwnerListingActions extends StatelessWidget {
+  const _OwnerListingActions({
+    required this.onEdit,
+    required this.onApplications,
+  });
+
+  final VoidCallback onEdit;
+  final VoidCallback onApplications;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: AppColors.background,
+        elevation: 12,
+        shadowColor: Colors.black54,
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 48,
+                  child: OutlinedButton.icon(
+                    onPressed: onApplications,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.surfaceBorder),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    icon: const Icon(Icons.group_outlined, size: 20),
+                    label: Text(
+                      'View applications',
+                      style: AppTypography.labelLarge,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: onEdit,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                    label: Text('Edit listing', style: AppTypography.button),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
 class _ApplyBar extends ConsumerStatefulWidget {
   const _ApplyBar({required this.adId});
   final String adId;
@@ -472,47 +595,57 @@ class _ApplyBarState extends ConsumerState<_ApplyBar> {
 
   Future<void> _apply() async {
     setState(() => _loading = true);
-    final success =
+    final err =
         await ref.read(applicationsProvider(widget.adId).notifier).applyToAd();
-    if (mounted) {
-      setState(() {
-        _loading = false;
-        _applied = success;
-      });
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('🎾 Application sent!')),
-        );
-      }
+    if (!mounted) return;
+    setState(() => _loading = false);
+    if (err == null) {
+      setState(() => _applied = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Application sent.')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(err),
+          backgroundColor: AppColors.danger,
+        ),
+      );
     }
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: (_loading || _applied) ? null : _apply,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _applied ? AppColors.surfaceBorder : AppColors.primary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+  Widget build(BuildContext context) => Material(
+        color: AppColors.background,
+        elevation: 12,
+        shadowColor: Colors.black54,
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: (_loading || _applied) ? null : _apply,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      _applied ? AppColors.surfaceBorder : AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: _loading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(
+                        _applied ? 'Applied' : 'Apply to Join',
+                        style: AppTypography.button,
+                      ),
               ),
-              child: _loading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
-                    )
-                  : Text(
-                      _applied ? '✓ Applied' : '🎾 Apply to Join',
-                      style: AppTypography.button,
-                    ),
             ),
           ),
         ),

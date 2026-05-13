@@ -13,6 +13,28 @@ class EditProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
+/// Maps API / legacy values to dropdown options: Right | Left | Ambidextrous.
+String? _normalizePreferredHand(String? raw) {
+  if (raw == null) return null;
+  final t = raw.trim();
+  if (t.isEmpty) return null;
+  final lower = t.toLowerCase();
+  if (lower == 'right' || lower == 'r' || lower == 'right hand') {
+    return 'Right';
+  }
+  if (lower == 'left' || lower == 'l' || lower == 'left hand') {
+    return 'Left';
+  }
+  if (lower == 'ambidextrous' ||
+      lower == 'ambi' ||
+      lower == 'both' ||
+      lower == 'both hands') {
+    return 'Ambidextrous';
+  }
+  if (t == 'Right' || t == 'Left' || t == 'Ambidextrous') return t;
+  return null;
+}
+
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -26,6 +48,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _nameController.dispose();
     _bioController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(EditProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userId != widget.userId) {
+      _initialized = false;
+    }
   }
 
   Future<void> _save() async {
@@ -90,7 +120,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (!_initialized) {
         _nameController.text = user.fullName;
         _bioController.text = user.bio ?? '';
-        _selectedHand = user.preferredHand;
+        _selectedHand = _normalizePreferredHand(user.preferredHand);
         _initialized = true;
       }
     });
@@ -170,7 +200,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: 20),
 
               // Preferred Hand
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<String?>(
+                key: ValueKey('hand_${_selectedHand ?? 'nil'}'),
                 initialValue: _selectedHand,
                 decoration: const InputDecoration(
                   labelText: 'Preferred Hand',
@@ -178,10 +209,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
                 dropdownColor: AppColors.surfaceElevated,
                 items: const [
+                  DropdownMenuItem(value: null, child: Text('Not set')),
                   DropdownMenuItem(value: 'Right', child: Text('Right')),
                   DropdownMenuItem(value: 'Left', child: Text('Left')),
                   DropdownMenuItem(
-                      value: 'Ambidextrous', child: Text('Ambidextrous')),
+                    value: 'Ambidextrous',
+                    child: Text('Ambidextrous'),
+                  ),
                 ],
                 onChanged: (v) => setState(() => _selectedHand = v),
               ),

@@ -152,7 +152,10 @@ final class ApplicationRepository {
         '/ads/$adId/applications',
       );
       return (res.data ?? [])
-          .map((j) => ApplicationModel.fromJson(j as Map<String, dynamic>))
+          .map((j) => ApplicationModel.fromJson(
+                j as Map<String, dynamic>,
+                fallbackAdId: adId,
+              ))
           .toList();
     } on DioException catch (e) {
       throw parseApiError(e);

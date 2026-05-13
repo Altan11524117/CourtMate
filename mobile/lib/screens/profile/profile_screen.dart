@@ -18,7 +18,9 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(userProfileProvider(userId));
     final authState = ref.watch(authProvider);
-    final isOwnProfile = authState.userId == userId;
+    final isOwnProfile = authState.userId != null &&
+        authState.userId!.toLowerCase().trim() ==
+            userId.toLowerCase().trim();
 
     return Scaffold(
       body: profileState.when(
@@ -111,7 +113,14 @@ class ProfileScreen extends ConsumerWidget {
                       // Name
                       Text(user.fullName, style: AppTypography.headingLarge),
                       const SizedBox(height: 6),
-                      Text(user.email, style: AppTypography.bodyMedium),
+                      if (isOwnProfile && user.email.isNotEmpty)
+                        Text(user.email, style: AppTypography.bodyMedium),
+                      if (!isOwnProfile)
+                        Text(
+                          'Tennis player',
+                          style: AppTypography.bodyMedium
+                              .copyWith(color: AppColors.textMuted),
+                        ),
                       const SizedBox(height: 12),
 
                       // Level badge

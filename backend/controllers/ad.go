@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,14 +23,38 @@ type AdInput struct {
 }
 
 func ListAds(c *gin.Context) {
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
-	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+	limit, _ := strconv.Atoi(limitStr)
+	offset, _ := strconv.Atoi(offsetStr)
+
+	cacheKey := fmt.Sprintf("ads:list:%s:%s", limitStr, offsetStr)
+
+	if config.RedisClient != nil {
+		cachedAds, err := config.RedisClient.Get(config.Ctx, cacheKey).Result()
+		if err == nil {
+			var ads []models.Ad
+			if json.Unmarshal([]byte(cachedAds), &ads) == nil {
+				// Cache hit
+				c.JSON(http.StatusOK, ads)
+				return
+			}
+		}
+	}
 
 	var ads []models.Ad
 	config.DB.Where("status = ?", "open").
 		Order("created_at desc").
 		Limit(limit).Offset(offset).
 		Find(&ads)
+
+	if config.RedisClient != nil {
+		adsJSON, err := json.Marshal(ads)
+		if err == nil {
+			// Cache the result for 1 minute
+			config.RedisClient.Set(config.Ctx, cacheKey, adsJSON, 1*time.Minute)
+		}
+	}
 
 	c.JSON(http.StatusOK, ads)
 }
@@ -93,6 +119,15 @@ func CreateAd(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create ad"})
 		return
 	}
+
+	// Publish event to RabbitMQ
+	event := map[string]interface{}{
+		"event":     "AdCreated",
+		"adId":      ad.ID,
+		"title":     ad.Title,
+		"ownerId":   ad.OwnerID,
+	}
+	config.PublishMessage("ad_events", event)
 
 	c.JSON(http.StatusCreated, ad)
 }

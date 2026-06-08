@@ -24,6 +24,10 @@ func init() {
 func main() {
 	// Veritabanına bağlan
 	config.ConnectDatabase()
+	
+	// Redis ve RabbitMQ bağlan (hata verirse çökmeyecek şekilde ayarlandı)
+	config.ConnectRedis()
+	config.ConnectRabbitMQ()
 
 	// Gin router'ı oluştur
 	r := gin.Default()

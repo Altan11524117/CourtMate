@@ -44,8 +44,6 @@ const AdDetail: React.FC = () => {
     })
     const applications = applicationsRaw ?? []
 
-    const applications = applicationsRaw ?? []
-
     const applyMutation = useMutation({
         mutationFn: () => adsApi.apply(adId!),
         onSuccess: () => setApplySuccess(true),
@@ -411,14 +409,9 @@ const AdDetail: React.FC = () => {
                                                         : { backgroundColor: 'rgba(248,113,113,0.12)', color: '#fca5a5', border: '1px solid rgba(248,113,113,0.2)' }
                                                     ),
                                                 }}>
-<<<<<<< Updated upstream
                                                     {app.status
                                                         ? app.status.charAt(0).toUpperCase() + app.status.slice(1)
                                                         : '—'}
-=======
-
-                                                    {app.status ? app.status.charAt(0).toUpperCase() + app.status.slice(1) : 'Unknown'}
->>>>>>> Stashed changes
                                                 </span>
                                             )}
                                         </div>

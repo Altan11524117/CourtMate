@@ -17,20 +17,12 @@ const ExamPage: React.FC = () => {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
 
-<<<<<<< Updated upstream
     const { data: questionsRaw, isPending, isFetching, isError, error: queryError } = useQuery({
         queryKey: ['exam-questions', user?.level],
         queryFn: () => examsApi.getQuestions(user?.level),
-=======
-    const { data: questionsRaw, isLoading } = useQuery({
-        queryKey: ['exam-questions'],
-        queryFn: examsApi.getQuestions,
->>>>>>> Stashed changes
         enabled: started,
     })
-    const questions = questionsRaw ?? []
-
-    const examLoading = started && (isPending || isFetching) && questions.length === 0
+    const examLoading = started && (isPending || isFetching) && (!questionsRaw || questionsRaw.length === 0)
 
     const questions: ExamQuestion[] = (questionsRaw ?? []).map(q => ({
         ...q,
@@ -312,11 +304,7 @@ const ExamPage: React.FC = () => {
                                             color: selected ? 'white' : 'rgba(255,255,255,0.35)',
                                             border: `1px solid ${selected ? '#40916c' : 'rgba(255,255,255,0.1)'}`,
                                         }}>
-<<<<<<< Updated upstream
                                             {letters[idx] ?? String.fromCharCode(65 + idx)}
-=======
-                                            {letters[idx] ?? ''}
->>>>>>> Stashed changes
                                         </span>
                                         <span style={{
                                             fontSize: '14px', lineHeight: 1.45,

@@ -1,26 +1,43 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
   db:
     image: postgres:15-alpine
     container_name: courtmate_db
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: rootpassword # Geliştirme ortamı için basit bir şifre
-      POSTGRES_DB: courtmate
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: courtmate_db
     ports:
       - "5432:5432"
     volumes:
       - courtmate_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - courtmate_network
 
+  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: courtmate_redis
     restart: always
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - courtmate_network
 
+  # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: courtmate_rabbitmq
@@ -31,6 +48,67 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - courtmate_network
+
+  # Go Backend Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: courtmate_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      # Çevre Değişkenleri
+      - ENVIRONMENT=development
+      - GIN_MODE=debug
+      # Database Configuration
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=courtmate_db
+      - DB_PORT=5432
+      # Server Configuration
+      - PORT=8000
+      # Security & Auth
+      - JWT_SECRET=courtmate_super_secret_key_2026
+      # Frontend
+      - FRONTEND_URL=http://localhost:5173
+      # External APIs
+      - RESEND_API_KEY=your_resend_api_key_here
+      - GROQ_API_KEY=your_groq_api_key_here
+      # Redis Configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # RabbitMQ Configuration
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - courtmate_network
 
 volumes:
   courtmate_pgdata:
+
+networks:
+  courtmate_network:
+    driver: bridge

@@ -1,6 +1,10 @@
 package routes
 
 import (
+	"net/http"
+	"time"
+
+	"courtmate-backend/config"
 	"courtmate-backend/controllers"
 	"courtmate-backend/middlewares"
 
@@ -8,6 +12,17 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
+	// Health check endpoint (public, no auth required)
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":    "healthy",
+			"timestamp": time.Now().Unix(),
+			"service":   "courtmate-backend",
+			"database":  checkDatabaseHealth(),
+			"rabbitmq":  checkRabbitMQHealth(),
+		})
+	})
+
 	v1 := router.Group("/v1")
 
 	// Auth (public)
@@ -54,4 +69,27 @@ protected.POST("/exams/analyze", controllers.AnalyzeExamWithAI)
 		protected.POST("/ads/:adId/applications", controllers.ApplyToAd)
 		protected.PATCH("/ads/:adId/applications/:applicationId", controllers.UpdateApplicationStatus)
 	}
+}
+
+// Helper function to check database health
+func checkDatabaseHealth() string {
+	if config.DB == nil {
+		return "disconnected"
+	}
+	sqlDB, err := config.DB.DB()
+	if err != nil {
+		return "error"
+	}
+	if err := sqlDB.Ping(); err != nil {
+		return "unhealthy"
+	}
+	return "healthy"
+}
+
+// Helper function to check RabbitMQ health
+func checkRabbitMQHealth() string {
+	if config.RabbitChannel == nil {
+		return "disconnected"
+	}
+	return "healthy"
 }

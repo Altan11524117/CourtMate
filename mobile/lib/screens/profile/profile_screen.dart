@@ -179,10 +179,11 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 20),
                     ],
 
-                    // Level exam CTA (only if own profile and no level)
-                    if (isOwnProfile && !user.hasLevel) ...[
+                    // Level exam CTA (only if own profile)
+                    if (isOwnProfile) ...[
                       const SizedBox(height: 8),
                       _ExamCta(
+                        isRetake: user.hasLevel,
                         onTap: () {
                           ref.read(examProvider.notifier).reset();
                           context.push(AppRoutes.examIntro);
@@ -267,8 +268,9 @@ class _StatTile extends StatelessWidget {
 }
 
 class _ExamCta extends StatelessWidget {
-  const _ExamCta({required this.onTap});
+  const _ExamCta({required this.onTap, this.isRetake = false});
   final VoidCallback onTap;
+  final bool isRetake;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -304,7 +306,7 @@ class _ExamCta extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Take the Level Exam',
+                    Text(isRetake ? 'Retake the Level Exam' : 'Take the Level Exam',
                         style: AppTypography.headingSmall),
                     const SizedBox(height: 4),
                     Text(
